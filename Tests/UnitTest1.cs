@@ -1,10 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
+using System.ServiceModel;
+using System.Text;
 using System.Threading.Tasks;
+using CoreLib.Commands;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tests.ServiceReference;
+using System.ServiceModel.Channels;
 
 namespace Tests {
    [TestClass]
@@ -18,7 +24,6 @@ namespace Tests {
 
          var serializer = new XmlSerialization<TestClass>();
          Stream stream = serializer.Serialize(testInstance);
-         stream.Position = 0;
          TestClass deserializeInstance = serializer.Deserialize(stream);
 
          Assert.IsTrue(testInstance.Name == deserializeInstance.Name);
@@ -27,8 +32,32 @@ namespace Tests {
 
       [TestMethod]
       public async Task UdpTest() {
-         var udpHelper = new UdpHelper(4444, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 45887));
+         var udpHelper = new UdpListener(4444, "net.tcp://127.0.0.1:11000");
          await udpHelper.ListenAsync();
+      }
+
+      [TestMethod]
+      public void SendLogin() {
+         var udpHelper = new UdpSender("192.168.1.255", 4444);
+         string strTcpEndPoint = udpHelper.RequireTcpSettings();
+         var remoteTcpEndPoint = new EndpointAddress(strTcpEndPoint);
+
+         var data = new AuthorizationCommand() {
+            Login = "felias",
+            PasswordHash = "qe4wtdsfghdfggf"
+         };
+         var k = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
+         string key = k.GetSessionKey(data);
+      }
+      [TestMethod]
+      public void SendCommandOnUdp() {
+         var command = new ServiceCommand() {
+            Command = CommandActions.GetUserInfo,
+            SessionKey = "werdwfsdfaasfd"
+         };
+         var udpHelper = new UdpSender("192.168.1.255", 4444);
+         udpHelper.SendCommand(command);
+
       }
    }
 }

@@ -14,6 +14,7 @@ namespace CoreLib.Serialization {
       public Stream Serialize(TClass instance) {
          var stream = new MemoryStream();
          _Serializer.Serialize(stream, instance);
+         stream.Position = 0;
          return stream;
       }
 
