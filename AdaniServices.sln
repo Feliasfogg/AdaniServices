@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLib", "CoreLib\CoreLib.csproj", "{985289CE-FE9D-41DD-91D4-3F1E3A4F8CB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLib", "CoreLib\CoreLib\CoreLib.csproj", "{985289CE-FE9D-41DD-91D4-3F1E3A4F8CB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{1D106E66-FC44-47B8-8FB1-E509C3414293}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{1D106E66-FC44-47B8-8FB1-E509C3414293}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationWcfLib", "..\AuthorizationWcfLib\AuthorizationWcfLib.csproj", "{F55F5718-33DB-4C63-8431-B00D25B34580}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationWcfLib", "AuthorizationWcfLib\AuthorizationWcfLib.csproj", "{F55F5718-33DB-4C63-8431-B00D25B34580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "..\TestApplication\TestApplication.csproj", "{CB2628CF-BE96-457F-8115-FFAF341EEFE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "TestApplication\TestApplication.csproj", "{CB2628CF-BE96-457F-8115-FFAF341EEFE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
