@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EntityDataModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="EntityDataModelStoreContainer">
+    <EntitySet Name="Users" EntityType="EntityDataModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="SessionKeys" EntityType="EntityDataModel.Store.SessionKeys" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="UserSessionKey" Association="EntityDataModel.Store.UserSessionKey">
+      <End Role="User" EntitySet="Users" />
+      <End Role="SessionKey" EntitySet="SessionKeys" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Login" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="AccessLevel" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SessionKeys">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Key" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ExpirationTime" Type="datetime" Nullable="false" />
+    <Property Name="User_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="UserSessionKey">
+    <End Role="User" Type="EntityDataModel.Store.Users" Multiplicity="1" />
+    <End Role="SessionKey" Type="EntityDataModel.Store.SessionKeys" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SessionKey">
+        <PropertyRef Name="User_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="EntityDataModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="EntityDataModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="EntityDataModel.User" />
+          <EntitySet Name="SessionKeys" EntityType="EntityDataModel.SessionKey" />
+          <AssociationSet Name="UserSessionKey" Association="EntityDataModel.UserSessionKey">
+            <End Role="User" EntitySet="Users" />
+            <End Role="SessionKey" EntitySet="SessionKeys" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="true" />
+          <Property Name="Login" Type="String" Nullable="false" />
+          <Property Name="Password" Type="String" Nullable="false" />
+          <NavigationProperty Name="SessionKey" Relationship="EntityDataModel.UserSessionKey" FromRole="User" ToRole="SessionKey" />
+          <Property Name="AccessLevel" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SessionKey">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" Nullable="false" />
+          <Property Name="ExpirationTime" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="EntityDataModel.UserSessionKey" FromRole="SessionKey" ToRole="User" />
+        </EntityType>
+        <Association Name="UserSessionKey">
+          <End Type="EntityDataModel.User" Role="User" Multiplicity="1" />
+          <End Type="EntityDataModel.SessionKey" Role="SessionKey" Multiplicity="0..1" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EntityDataModelStoreContainer" CdmEntityContainer="EntityDataModelContainer">
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityDataModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Login" ColumnName="Login" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SessionKeys">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityDataModel.SessionKey)">
+        <MappingFragment StoreEntitySet="SessionKeys">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Key" ColumnName="Key" />
+          <ScalarProperty Name="ExpirationTime" ColumnName="ExpirationTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="UserSessionKey" TypeName="EntityDataModel.UserSessionKey" StoreEntitySet="SessionKeys">
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="User_Id" />
+      </EndProperty>
+      <EndProperty Name="SessionKey">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

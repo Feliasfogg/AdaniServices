@@ -60,7 +60,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="TestClass.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="AuthorizationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -78,14 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\ServiceReference\CoreLib.Commands.xsd">
+    <None Include="Service References\ServiceReference\CoreLib.Commands1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\service.wsdl" />
-    <None Include="Service References\ServiceReference\service.xsd">
+    <None Include="Service References\ServiceReference\service1.wsdl" />
+    <None Include="Service References\ServiceReference\service2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\service1.xsd">
+    <None Include="Service References\ServiceReference\service21.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

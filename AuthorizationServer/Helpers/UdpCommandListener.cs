@@ -9,26 +9,27 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Commands;
+using CoreLib.Entity;
 using CoreLib.Serialization;
 
 
-namespace CoreLib.Helpers {
+namespace AuthorizationServer.Helpers {
    /// <summary>
    /// class provides easy methods for listen local udp port and recives tcp settings for client
    /// </summary>
-   public class UdpListener {
+   public class UdpCommandListener {
       private IPEndPoint _RemoteEndPoint;
-      private string _SettingsTcpEndPoint;
+      private string _TcpEpSettings;
       private int _ListenPort;
 
       /// <summary>
       /// create instance of UdpHelper
       /// </summary>
       /// <param name="listenPort">local listen port</param>
-      /// <param name="settingsTcpEndPoint">local service TCP endpoint</param>
-      public UdpListener(int listenPort, string settingsTcpEndPoint) {
+      /// <param name="tcpEpSettings">local service TCP endpoint</param>
+      public UdpCommandListener(int listenPort, string tcpEpSettings) {
          _ListenPort = listenPort;
-         _SettingsTcpEndPoint = settingsTcpEndPoint;
+         _TcpEpSettings = tcpEpSettings;
          _RemoteEndPoint = new IPEndPoint(IPAddress.Any, 1111);
       }
 
@@ -49,17 +50,47 @@ namespace CoreLib.Helpers {
       private void Parse(byte[] data) {
          string result = Encoding.ASCII.GetString(data);
          if(result == "GET SETTINGS") {
-            SendSettings();
+            SendTcpSettings();
          }
          else {
             var deserializer = new XmlSerialization<ServiceCommand>();
             var command = deserializer.Deserialize(new MemoryStream(data));
+            CommandExecute(command);
          }
       }
 
-      private void SendSettings() {
+      private void CommandExecute(ServiceCommand command) {
+         switch(command.Command) {
+         case CommandActions.GetAuthorizationInfo:
+            GetAuthorizationInfo(command);
+            break;
+         }
+      }
+
+      private void GetAuthorizationInfo(ServiceCommand command) {
+         int userId = SessionKeysManager.GetIdByKey(command.SessionKey);
+         if(userId != 0) {
+            using(var provider = new EntityProvider()) {
+               User user = provider.GetUserById(userId);
+               var serialization = new XmlSerialization<User>();
+               var stream = serialization.Serialize(user);
+               SendResponse(stream);
+            }
+         }
+      }
+
+      private void SendResponse(Stream stream) {
          var client = new UdpClient();
-         var strAddress = _SettingsTcpEndPoint.ToString();
+         byte[] btarr = new byte[stream.Length];
+         stream.Read(btarr, 0, (int)stream.Length);
+         client.Connect(_RemoteEndPoint);
+         client.Send(btarr, btarr.Length);
+      }
+
+
+      private void SendTcpSettings() {
+         var client = new UdpClient();
+         var strAddress = _TcpEpSettings.ToString();
          byte[] btarr = Encoding.ASCII.GetBytes(strAddress);
          client.Connect(_RemoteEndPoint);
          client.Send(btarr, btarr.Length);

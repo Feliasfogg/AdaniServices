@@ -12,14 +12,12 @@ namespace CoreLib.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class SessionKey
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public long AccessLevel { get; set; }
+        public string Key { get; set; }
+        public System.DateTime ExpirationTime { get; set; }
     
-        public virtual SessionKey SessionKey { get; set; }
+        public virtual User User { get; set; }
     }
 }

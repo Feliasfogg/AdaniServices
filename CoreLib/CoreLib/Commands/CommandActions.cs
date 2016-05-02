@@ -22,7 +22,7 @@ namespace CoreLib.Commands {
       DeleteUser,
 
       [EnumMember]
-      GetUserInfo,
+      AuthorizationInfo,
 
       [EnumMember]
       GetSettings

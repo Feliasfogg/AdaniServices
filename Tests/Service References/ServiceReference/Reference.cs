@@ -15,17 +15,11 @@ namespace Tests.ServiceReference {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IAuthorization")]
     public interface IAuthorization {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/GetSessionKey", ReplyAction="http://tempuri.org/IAuthorization/GetSessionKeyResponse")]
-        string GetSessionKey(CoreLib.Commands.AuthorizationCommand command);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/Authorization", ReplyAction="http://tempuri.org/IAuthorization/AuthorizationResponse")]
+        string Authorization(CoreLib.Commands.AuthorizationCommand command);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/GetSessionKey", ReplyAction="http://tempuri.org/IAuthorization/GetSessionKeyResponse")]
-        System.Threading.Tasks.Task<string> GetSessionKeyAsync(CoreLib.Commands.AuthorizationCommand command);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/GetTcpSettings", ReplyAction="http://tempuri.org/IAuthorization/GetTcpSettingsResponse")]
-        string GetTcpSettings();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/GetTcpSettings", ReplyAction="http://tempuri.org/IAuthorization/GetTcpSettingsResponse")]
-        System.Threading.Tasks.Task<string> GetTcpSettingsAsync();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthorization/Authorization", ReplyAction="http://tempuri.org/IAuthorization/AuthorizationResponse")]
+        System.Threading.Tasks.Task<string> AuthorizationAsync(CoreLib.Commands.AuthorizationCommand command);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -55,20 +49,12 @@ namespace Tests.ServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public string GetSessionKey(CoreLib.Commands.AuthorizationCommand command) {
-            return base.Channel.GetSessionKey(command);
+        public string Authorization(CoreLib.Commands.AuthorizationCommand command) {
+            return base.Channel.Authorization(command);
         }
         
-        public System.Threading.Tasks.Task<string> GetSessionKeyAsync(CoreLib.Commands.AuthorizationCommand command) {
-            return base.Channel.GetSessionKeyAsync(command);
-        }
-        
-        public string GetTcpSettings() {
-            return base.Channel.GetTcpSettings();
-        }
-        
-        public System.Threading.Tasks.Task<string> GetTcpSettingsAsync() {
-            return base.Channel.GetTcpSettingsAsync();
+        public System.Threading.Tasks.Task<string> AuthorizationAsync(CoreLib.Commands.AuthorizationCommand command) {
+            return base.Channel.AuthorizationAsync(command);
         }
     }
 }

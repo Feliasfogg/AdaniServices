@@ -11,6 +11,8 @@ using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tests.ServiceReference;
 using System.ServiceModel.Channels;
+using AuthorizationWcfLib.Data;
+using CoreLib.Entity;
 
 namespace Tests {
    [TestClass]
@@ -32,32 +34,46 @@ namespace Tests {
 
       [TestMethod]
       public async Task UdpTest() {
-         var udpHelper = new UdpListener(4444, "net.tcp://127.0.0.1:11000");
+         var udpHelper = new UdpCommandListener(4444, "net.tcp://127.0.0.1:11000");
          await udpHelper.ListenAsync();
       }
 
       [TestMethod]
-      public void SendLogin() {
-         var udpHelper = new UdpSender("192.168.1.255", 4444);
-         string strTcpEndPoint = udpHelper.RequireTcpSettings();
+      public void AuthorizationTest() {
+         var sender = new UdpCommandSender("192.168.1.255", 4444);
+         string strTcpEndPoint = sender.GetTcpSettings();
          var remoteTcpEndPoint = new EndpointAddress(strTcpEndPoint);
 
          var data = new AuthorizationCommand() {
             Login = "felias",
-            PasswordHash = "qe4wtdsfghdfggf"
+            Password = "fenris"
          };
-         var k = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
-         string key = k.GetSessionKey(data);
+         var client = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
+         string sessionKey = client.Authorization(data);
+         Assert.IsTrue(sessionKey != null);
       }
-      [TestMethod]
-      public void SendCommandOnUdp() {
-         var command = new ServiceCommand() {
-            Command = CommandActions.GetUserInfo,
-            SessionKey = "werdwfsdfaasfd"
-         };
-         var udpHelper = new UdpSender("192.168.1.255", 4444);
-         udpHelper.SendCommand(command);
 
+      [TestMethod]
+      public void GetAuthorizationInfoTest() {
+         var sender = new UdpCommandSender("192.168.1.255", 4444);
+         string strTcpEndPoint = sender.GetTcpSettings();
+         var remoteTcpEndPoint = new EndpointAddress(strTcpEndPoint);
+
+         var data = new AuthorizationCommand() {
+            Login = "felias",
+            Password = "fenris",
+         };
+         var client = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
+         string sessionKey = client.Authorization(data);
+         Assert.IsTrue(sessionKey != String.Empty);
+
+
+         var command = new ServiceCommand() {
+            Command = CommandActions.AuthorizationInfo,
+            SessionKey = sessionKey
+         };
+
+         UserEntity userEntity = sender.GetUserInfo(command);
       }
    }
 }

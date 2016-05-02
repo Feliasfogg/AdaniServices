@@ -13,10 +13,10 @@ namespace CoreLib.Entity
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class UsersModelContainer : DbContext
+    public partial class EntityDataModelContainer : DbContext
     {
-        public UsersModelContainer()
-            : base("name=UsersModelContainer")
+        public EntityDataModelContainer()
+            : base("name=EntityDataModelContainer")
         {
         }
     
@@ -26,5 +26,6 @@ namespace CoreLib.Entity
         }
     
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<SessionKey> SessionKeys { get; set; }
     }
 }

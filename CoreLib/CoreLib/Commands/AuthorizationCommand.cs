@@ -8,10 +8,11 @@ using Microsoft.SqlServer.Server;
 
 namespace CoreLib.Commands {
    [DataContract]
-   public class AuthorizationCommand: ServiceCommand {
+   public class AuthorizationCommand : ServiceCommand {
       [DataMember]
       public string Login { get; set; }
+
       [DataMember]
-      public string PasswordHash { get; set; }
+      public string Password { get; set; }
    }
 }

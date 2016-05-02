@@ -12,9 +12,6 @@ namespace AuthorizationWcfLib {
    [ServiceContract]
    public interface IAuthorization {
       [OperationContract]
-      string GetSessionKey(AuthorizationCommand command);
-
-      [OperationContract]
-      string GetTcpSettings();
+      string Authorization(AuthorizationCommand command);
    }
 }

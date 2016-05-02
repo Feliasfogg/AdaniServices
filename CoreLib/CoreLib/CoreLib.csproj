@@ -55,58 +55,60 @@
     <Compile Include="Commands\AuthorizationCommand.cs" />
     <Compile Include="Commands\CommandActions.cs" />
     <Compile Include="Commands\ServiceCommand.cs" />
-    <Compile Include="Entity\User.cs">
-      <DependentUpon>UserModel.tt</DependentUpon>
+    <Compile Include="Entity\EntityDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityDataModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\UdpSender.cs" />
-    <Compile Include="Helpers\UdpListener.cs" />
+    <Compile Include="Entity\EntityDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\EntityDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\EntityProvider.cs" />
+    <Compile Include="Entity\SessionKey.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\SessionKeyEntity.cs" />
+    <Compile Include="Entity\User.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\UserEntity.cs" />
+    <Compile Include="Helpers\UdpCommandSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\XmlSerialization.cs" />
-    <Compile Include="Entity\UserModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UserModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entity\UserModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UserModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entity\UserModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UserModel.edmx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <EntityDeploy Include="Entity\UserModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>UserModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <None Include="packages.config" />
-    <None Include="Entity\UserModel.edmx.diagram">
-      <DependentUpon>UserModel.edmx</DependentUpon>
+    <EntityDeploy Include="Entity\EntityDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EntityDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Entity\EntityDataModel.edmx.diagram">
+      <DependentUpon>EntityDataModel.edmx</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Entity\UserModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UserModel.Context.cs</LastGenOutput>
-      <DependentUpon>UserModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Entity\UserModel.edmx.sql" />
-    <Content Include="Entity\UserModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UserModel.cs</LastGenOutput>
-      <DependentUpon>UserModel.edmx</DependentUpon>
-    </Content>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Entity\EntityDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EntityDataModel.Context.cs</LastGenOutput>
+      <DependentUpon>EntityDataModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Entity\EntityDataModel.edmx.sql" />
+    <Content Include="Entity\EntityDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EntityDataModel.cs</LastGenOutput>
+      <DependentUpon>EntityDataModel.edmx</DependentUpon>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
