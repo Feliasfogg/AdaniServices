@@ -27,5 +27,7 @@ namespace CoreLib.Entity
     
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<SessionKey> SessionKeys { get; set; }
+        public virtual DbSet<DeviceGroup> DeviceGroups { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
     }
 }

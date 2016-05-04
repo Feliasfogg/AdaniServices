@@ -8,6 +8,9 @@
         <EntityTypeShape EntityType="EntityDataModel.User" Width="1.5" PointX="1" PointY="0.75" />
         <EntityTypeShape EntityType="EntityDataModel.SessionKey" Width="1.5" PointX="3.375" PointY="0.75" />
         <AssociationConnector Association="EntityDataModel.UserSessionKey" />
+        <EntityTypeShape EntityType="EntityDataModel.DeviceGroup" Width="1.5" PointX="1" PointY="3.375" />
+        <EntityTypeShape EntityType="EntityDataModel.Device" Width="1.5" PointX="3.75" PointY="3.375" />
+        <AssociationConnector Association="EntityDataModel.DeviceGroupDeviceSettings" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

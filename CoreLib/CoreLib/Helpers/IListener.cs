@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreLib.Helpers {
    public interface IListener {
-      void ListenUdp();
-      Task ListenUdpAsync();
+      void Listen();
+      Task ListenAsync();
    }
 }

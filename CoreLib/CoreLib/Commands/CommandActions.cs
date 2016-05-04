@@ -25,6 +25,6 @@ namespace CoreLib.Commands {
       AuthorizationInfo,
 
       [EnumMember]
-      GetSettings
+      GetDeviceSettings
    }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Helpers;
 using System.ServiceModel;
+using AuthorizationServer.Listeners;
 
 namespace AuthorizationServer {
    class Program {
@@ -15,10 +16,9 @@ namespace AuthorizationServer {
          //Int64 v = BitConverter.ToInt64(btarr, 0);
          //var bt = BitConverter.GetBytes(v);
          var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000);
-         var remoteEp = new IPEndPoint(IPAddress.Parse("127.0.0.2"), 11000);
 
-         var setter = new CommandListener(4444, localEp);
-         setter.ListenUdpAsync();
+         var setter = new AuthorizationListener(4444, localEp);
+         setter.ListenAsync();
          Console.ReadLine();
       }
    }

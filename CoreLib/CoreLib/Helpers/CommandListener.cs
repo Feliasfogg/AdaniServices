@@ -19,27 +19,27 @@ namespace CoreLib.Helpers {
    /// <summary>
    /// class provides easy methods for listen local udp port and recives tcp settings for client
    /// </summary>
-   public class CommandListener : IListener {
-      private IPEndPoint _RemoteEndPoint;
-      private IPEndPoint _TcpEp;
-      private int _ListenPort;
+   public abstract class CommandListener : IListener {
+      protected IPEndPoint _RemoteEndPoint;
+      protected IPEndPoint _LocalTcpEp;
+      protected int _ListenPort;
 
       /// <summary>
       /// create instance of UdpHelper
       /// </summary>
       /// <param name="listenPort">local listen port</param>
-      /// <param name="tcpEp">local service TCP endpoint</param>
-      public CommandListener(int listenPort, IPEndPoint tcpEp) {
+      /// <param name="localTcpEp">local service TCP endpoint</param>
+      public CommandListener(int listenPort, IPEndPoint localTcpEp) {
          _ListenPort = listenPort;
-         _TcpEp = tcpEp;
+         _LocalTcpEp = localTcpEp;
          _RemoteEndPoint = new IPEndPoint(IPAddress.Any, 1111);
       }
 
-      public Task ListenUdpAsync() {
-         return Task.Run(() => ListenUdp());
+      public Task ListenAsync() {
+         return Task.Run(() => Listen());
       }
 
-      public void ListenUdp() {
+      public void Listen() {
          UdpClient client;
          while(true) {
             client = new UdpClient(_ListenPort);
@@ -49,38 +49,11 @@ namespace CoreLib.Helpers {
          }
       }
 
-      private void Parse(byte[] data) {
-         string strData = Encoding.ASCII.GetString(data);
-         if(strData == "GET SETTINGS") {
-            SendTcpSettings();
-         }
-         else {
-            var xml = new XmlDocument();
-            xml.LoadXml(strData);
-            XmlNodeList nodeList = xml.GetElementsByTagName("Command");
-            var xmlNode = nodeList.Item(0);
-            var responser = new Responser(_TcpEp);
-            switch(xmlNode.InnerText) {
-            case "Authorization": {
-               var deserializer = new XmlSerialization<AuthorizationCommand>();
-               var command = deserializer.Deserialize(new MemoryStream(data));
-               responser.CommandExecute(command);
-            }
-               break;
-            case "AuthorizationInfo": {
-               var deserializer = new XmlSerialization<ServiceCommand>();
-               var command = deserializer.Deserialize(new MemoryStream(data));
-               responser.CommandExecute(command);
-            }
-               break;
-            default:
-               break;
-            }
-         }
-      }
+      protected abstract void Parse(byte[] data);
+      protected abstract void CommandExecute(ServiceCommand command);
 
-      private void SendTcpSettings() {
-         var strAddress = _TcpEp.ToString();
+      protected void SendTcpSettings() {
+         var strAddress = _LocalTcpEp.ToString();
          byte[] btarr = Encoding.ASCII.GetBytes(strAddress);
 
          var client = new UdpClient();

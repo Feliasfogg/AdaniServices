@@ -32,9 +32,6 @@ namespace Tests {
 
       [TestMethod]
       public void GetTcpSettingsTest() {
-         var udpHelper = new CommandListener(4444, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000));
-         udpHelper.ListenUdpAsync();
-
          var sender = new CommandSender("192.168.1.255", 4444);
          sender.GetTcpSettings();
       }
@@ -57,7 +54,7 @@ namespace Tests {
          string commandString = Encoding.ASCII.GetString(btarr);
 
          sender.SendCommand(commandString);
-         byte[] btarrResponse = await sender.ReceiveData();
+         byte[] btarrResponse = await sender.ReceiveDataAsync();
          string strResponse = Encoding.ASCII.GetString(btarrResponse);
       }
 
@@ -73,14 +70,10 @@ namespace Tests {
          };
 
          var serializer1 = new XmlSerialization<AuthorizationCommand>();
-         Stream stream = serializer1.Serialize(command);
-         byte[] btarr = new byte[stream.Length];
-         stream.Read(btarr, 0, btarr.Length);
-         string commandString = Encoding.ASCII.GetString(btarr);
-
+         string commandString = serializer1.SerializeToXmlString(command);
          sender.SendCommand(commandString);
 
-         byte[] btarrResponse = await sender.ReceiveData();
+         byte[] btarrResponse = await sender.ReceiveDataAsync();
          string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
 
@@ -90,15 +83,13 @@ namespace Tests {
          };
 
          var serializer2 = new XmlSerialization<ServiceCommand>();
-         stream = serializer2.Serialize(authInfoCommand);
-         btarr = new byte[stream.Length];
-         stream.Read(btarr, 0, btarr.Length);
-         string strAuthInfoCommand = Encoding.ASCII.GetString(btarr);
+         string strAuthInfoCommand = serializer2.SerializeToXmlString(authInfoCommand);
 
 
          sender.SendCommand(strAuthInfoCommand);
-         btarrResponse = await sender.ReceiveData();
+         btarrResponse = await sender.ReceiveDataAsync();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(strAuthInfoResult != String.Empty);
       }
    }
 }

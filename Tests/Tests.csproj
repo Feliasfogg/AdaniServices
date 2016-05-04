@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="SettingsServiceTest.cs" />
     <Compile Include="TestClass.cs" />
     <Compile Include="AuthorizationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

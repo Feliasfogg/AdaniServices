@@ -36,7 +36,7 @@ namespace CoreLib.Helpers {
          _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
       }
 
-      public async Task<byte[]> ReceiveData() {
+      public async Task<byte[]> ReceiveDataAsync() {
          var client = new TcpClient();
          await client.ConnectAsync(_RemoteTcpEndPoint.Address, _RemoteTcpEndPoint.Port);
          NetworkStream stream = client.GetStream();
@@ -50,22 +50,6 @@ namespace CoreLib.Helpers {
          client.Close();
 
          return data.ToArray();
-      }
-
-
-      public UserEntity GetUserInfo(ServiceCommand command) {
-         var serializer = new XmlSerialization<ServiceCommand>();
-         Stream requestSteam = serializer.Serialize(command);
-
-         byte[] btarrCommand = new byte[requestSteam.Length];
-         requestSteam.Read(btarrCommand, 0, (int)requestSteam.Length);
-         _UdpClient.Send(btarrCommand, btarrCommand.Length, _BroadCastAddress);
-
-         byte[] btarrResponse = _UdpClient.Receive(ref _RemoteUdpEndPoint);
-         var deserializer = new XmlSerialization<UserEntity>();
-         var responseStream = new MemoryStream(btarrResponse);
-         UserEntity userEntity = deserializer.Deserialize(responseStream);
-         return userEntity;
       }
 
       public void GetTcpSettings() {

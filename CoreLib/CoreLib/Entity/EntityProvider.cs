@@ -8,10 +8,6 @@ namespace CoreLib.Entity {
    public class EntityProvider : IDisposable {
       private EntityDataModelContainer _Model = new EntityDataModelContainer();
 
-      public User GetUserByLogin(string login) {
-         return _Model.Users.FirstOrDefault(user => user.Login == login);
-      }
-
       public User GetUserByCredentials(string login, string password) {
          return _Model.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
       }

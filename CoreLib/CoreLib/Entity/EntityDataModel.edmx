@@ -8,9 +8,15 @@
   <EntityContainer Name="EntityDataModelStoreContainer">
     <EntitySet Name="Users" EntityType="EntityDataModel.Store.Users" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="SessionKeys" EntityType="EntityDataModel.Store.SessionKeys" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DeviceGroups" EntityType="EntityDataModel.Store.DeviceGroups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Devices" EntityType="EntityDataModel.Store.Devices" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="UserSessionKey" Association="EntityDataModel.Store.UserSessionKey">
       <End Role="User" EntitySet="Users" />
       <End Role="SessionKey" EntitySet="SessionKeys" />
+    </AssociationSet>
+    <AssociationSet Name="DeviceGroupDeviceSettings" Association="EntityDataModel.Store.DeviceGroupDeviceSettings">
+      <End Role="DeviceGroup" EntitySet="DeviceGroups" />
+      <End Role="DeviceSettings" EntitySet="Devices" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Users">
@@ -32,6 +38,32 @@
     <Property Name="ExpirationTime" Type="datetime" Nullable="false" />
     <Property Name="User_Id" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="DeviceGroups">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Devices">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DeviceGroupId" Type="int" Nullable="false" />
+    <Property Name="ConnectionType" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="GeneratorType" Type="int" Nullable="false" />
+    <Property Name="NormalVoltage" Type="int" Nullable="false" />
+    <Property Name="HighVoltage" Type="int" Nullable="false" />
+    <Property Name="NormalCurrent" Type="int" Nullable="false" />
+    <Property Name="HighCurrent" Type="int" Nullable="false" />
+    <Property Name="HighMode" Type="int" Nullable="false" />
+    <Property Name="ReseasonDate" Type="float" Nullable="false" />
+    <Property Name="WorkTime" Type="float" Nullable="false" />
+    <Property Name="XRayTime" Type="float" Nullable="false" />
+    <Property Name="LastWorkedDate" Type="float" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
   <Association Name="UserSessionKey">
     <End Role="User" Type="EntityDataModel.Store.Users" Multiplicity="1" />
     <End Role="SessionKey" Type="EntityDataModel.Store.SessionKeys" Multiplicity="*" />
@@ -41,6 +73,18 @@
       </Principal>
       <Dependent Role="SessionKey">
         <PropertyRef Name="User_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="DeviceGroupDeviceSettings">
+    <End Role="DeviceGroup" Type="EntityDataModel.Store.DeviceGroups" Multiplicity="1" />
+    <End Role="DeviceSettings" Type="EntityDataModel.Store.Devices" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="DeviceGroup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DeviceSettings">
+        <PropertyRef Name="DeviceGroupId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -54,6 +98,12 @@
           <AssociationSet Name="UserSessionKey" Association="EntityDataModel.UserSessionKey">
             <End Role="User" EntitySet="Users" />
             <End Role="SessionKey" EntitySet="SessionKeys" />
+          </AssociationSet>
+          <EntitySet Name="DeviceGroups" EntityType="EntityDataModel.DeviceGroup" />
+          <EntitySet Name="Devices" EntityType="EntityDataModel.Device" />
+          <AssociationSet Name="DeviceGroupDeviceSettings" Association="EntityDataModel.DeviceGroupDeviceSettings">
+            <End Role="DeviceGroup" EntitySet="DeviceGroups" />
+            <End Role="DeviceSettings" EntitySet="Devices" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
@@ -80,6 +130,46 @@
           <End Type="EntityDataModel.User" Role="User" Multiplicity="1" />
           <End Type="EntityDataModel.SessionKey" Role="SessionKey" Multiplicity="0..1" />
         </Association>
+        <EntityType Name="DeviceGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="DeviceSettings" Relationship="EntityDataModel.DeviceGroupDeviceSettings" FromRole="DeviceGroup" ToRole="DeviceSettings" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="DeviceGroup" Relationship="EntityDataModel.DeviceGroupDeviceSettings" FromRole="DeviceSettings" ToRole="DeviceGroup" />
+          <Property Name="DeviceGroupId" Type="Int32" Nullable="false" />
+          <Property Name="ConnectionType" Type="String" Nullable="false" />
+          <Property Name="GeneratorType" Type="Int32" Nullable="false" />
+          <Property Name="NormalVoltage" Type="Int32" Nullable="false" />
+          <Property Name="HighVoltage" Type="Int32" Nullable="false" />
+          <Property Name="NormalCurrent" Type="Int32" Nullable="false" />
+          <Property Name="HighCurrent" Type="Int32" Nullable="false" />
+          <Property Name="HighMode" Type="Int32" Nullable="false" />
+          <Property Name="ReseasonDate" Type="Double" Nullable="false" />
+          <Property Name="WorkTime" Type="Double" Nullable="false" />
+          <Property Name="XRayTime" Type="Double" Nullable="false" />
+          <Property Name="LastWorkedDate" Type="Double" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="DeviceGroupDeviceSettings">
+          <End Type="EntityDataModel.DeviceGroup" Role="DeviceGroup" Multiplicity="1" />
+          <End Type="EntityDataModel.Device" Role="DeviceSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DeviceGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DeviceSettings">
+              <PropertyRef Name="DeviceGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -103,6 +193,34 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Key" ColumnName="Key" />
           <ScalarProperty Name="ExpirationTime" ColumnName="ExpirationTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DeviceGroups">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityDataModel.DeviceGroup)">
+        <MappingFragment StoreEntitySet="DeviceGroups">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Devices">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityDataModel.Device)">
+        <MappingFragment StoreEntitySet="Devices">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="DeviceGroupId" ColumnName="DeviceGroupId" />
+          <ScalarProperty Name="ConnectionType" ColumnName="ConnectionType" />
+          <ScalarProperty Name="GeneratorType" ColumnName="GeneratorType" />
+          <ScalarProperty Name="NormalVoltage" ColumnName="NormalVoltage" />
+          <ScalarProperty Name="HighVoltage" ColumnName="HighVoltage" />
+          <ScalarProperty Name="NormalCurrent" ColumnName="NormalCurrent" />
+          <ScalarProperty Name="HighCurrent" ColumnName="HighCurrent" />
+          <ScalarProperty Name="HighMode" ColumnName="HighMode" />
+          <ScalarProperty Name="ReseasonDate" ColumnName="ReseasonDate" />
+          <ScalarProperty Name="WorkTime" ColumnName="WorkTime" />
+          <ScalarProperty Name="XRayTime" ColumnName="XRayTime" />
+          <ScalarProperty Name="LastWorkedDate" ColumnName="LastWorkedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
