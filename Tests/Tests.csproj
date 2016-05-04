@@ -54,55 +54,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Service References\ServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="TestClass.cs" />
     <Compile Include="AuthorizationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuthorizationWcfLib\AuthorizationWcfLib.csproj">
-      <Project>{f55f5718-33db-4c63-8431-b00d25b34580}</Project>
-      <Name>AuthorizationWcfLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CoreLib\CoreLib\CoreLib.csproj">
       <Project>{985289ce-fe9d-41dd-91d4-3f1e3a4f8cb9}</Project>
       <Name>CoreLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\ServiceReference\CoreLib.Commands1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\service1.wsdl" />
-    <None Include="Service References\ServiceReference\service2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\service21.xsd">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\ServiceReference\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ServiceReference\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ServiceReference\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

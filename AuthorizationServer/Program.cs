@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Helpers;
 using System.ServiceModel;
-using AuthorizationWcfLib;
-using AuthorizationWcfLib.Data;
 
 namespace AuthorizationServer {
    class Program {
@@ -15,16 +14,12 @@ namespace AuthorizationServer {
          //var btarr = new byte[] { 0, 0, 0, 0, 0, 0, 0, 250 };
          //Int64 v = BitConverter.ToInt64(btarr, 0);
          //var bt = BitConverter.GetBytes(v);
+         var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000);
+         var remoteEp = new IPEndPoint(IPAddress.Parse("127.0.0.2"), 11000);
 
-         string serviceAddress = "net.tcp://127.0.0.1:11111";
-         var setter = new UdpCommandListener(4444, serviceAddress);
-         setter.Listen();
-
-         //ServiceHost host = new ServiceHost(typeof(AuthorizationService), new Uri(serviceAddress));
-         //host.AddServiceEndpoint(typeof(IAuthorization), new NetTcpBinding(), string.Empty);
-         //host.Open();
-         //Console.WriteLine("ServiceStarted at " + serviceAddress);
-         //Console.ReadKey();
+         var setter = new CommandListener(4444, localEp);
+         setter.ListenUdpAsync();
+         Console.ReadLine();
       }
    }
 }

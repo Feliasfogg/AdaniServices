@@ -44,6 +44,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Channels" />
     <Reference Include="System.Xml.Linq" />
@@ -64,14 +66,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuthorizationWcfLib\AuthorizationWcfLib.csproj">
-      <Project>{f55f5718-33db-4c63-8431-b00d25b34580}</Project>
-      <Name>AuthorizationWcfLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CoreLib\CoreLib\CoreLib.csproj">
       <Project>{985289ce-fe9d-41dd-91d4-3f1e3a4f8cb9}</Project>
       <Name>CoreLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

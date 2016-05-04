@@ -9,9 +9,7 @@ using CoreLib.Commands;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Tests.ServiceReference;
 using System.ServiceModel.Channels;
-using AuthorizationWcfLib.Data;
 using CoreLib.Entity;
 
 namespace Tests {
@@ -33,47 +31,74 @@ namespace Tests {
       }
 
       [TestMethod]
-      public async Task UdpTest() {
-         var udpHelper = new UdpCommandListener(4444, "net.tcp://127.0.0.1:11000");
-         await udpHelper.ListenAsync();
+      public void GetTcpSettingsTest() {
+         var udpHelper = new CommandListener(4444, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000));
+         udpHelper.ListenUdpAsync();
+
+         var sender = new CommandSender("192.168.1.255", 4444);
+         sender.GetTcpSettings();
       }
 
       [TestMethod]
-      public void AuthorizationTest() {
-         var sender = new UdpCommandSender("192.168.1.255", 4444);
-         string strTcpEndPoint = sender.GetTcpSettings();
-         var remoteTcpEndPoint = new EndpointAddress(strTcpEndPoint);
+      public async Task AuthorizationTest() {
+         var sender = new CommandSender("192.168.1.255", 4444);
+         sender.GetTcpSettings();
 
-         var data = new AuthorizationCommand() {
+         var command = new AuthorizationCommand() {
+            Command = CommandActions.Authorization,
             Login = "felias",
             Password = "fenris"
          };
-         var client = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
-         string sessionKey = client.Authorization(data);
-         Assert.IsTrue(sessionKey != null);
+
+         var serializer = new XmlSerialization<AuthorizationCommand>();
+         Stream stream = serializer.Serialize(command);
+         byte[] btarr = new byte[stream.Length];
+         stream.Read(btarr, 0, btarr.Length);
+         string commandString = Encoding.ASCII.GetString(btarr);
+
+         sender.SendCommand(commandString);
+         byte[] btarrResponse = await sender.ReceiveData();
+         string strResponse = Encoding.ASCII.GetString(btarrResponse);
       }
 
       [TestMethod]
-      public void GetAuthorizationInfoTest() {
-         var sender = new UdpCommandSender("192.168.1.255", 4444);
-         string strTcpEndPoint = sender.GetTcpSettings();
-         var remoteTcpEndPoint = new EndpointAddress(strTcpEndPoint);
+      public async Task GetAuthInfoTest() {
+         var sender = new CommandSender("192.168.1.255", 4444);
+         sender.GetTcpSettings();
 
-         var data = new AuthorizationCommand() {
+         var command = new AuthorizationCommand() {
+            Command = CommandActions.Authorization,
             Login = "felias",
-            Password = "fenris",
+            Password = "fenris"
          };
-         var client = new AuthorizationClient(new NetTcpBinding(SecurityMode.Transport), remoteTcpEndPoint);
-         string sessionKey = client.Authorization(data);
-         Assert.IsTrue(sessionKey != String.Empty);
+
+         var serializer1 = new XmlSerialization<AuthorizationCommand>();
+         Stream stream = serializer1.Serialize(command);
+         byte[] btarr = new byte[stream.Length];
+         stream.Read(btarr, 0, btarr.Length);
+         string commandString = Encoding.ASCII.GetString(btarr);
+
+         sender.SendCommand(commandString);
+
+         byte[] btarrResponse = await sender.ReceiveData();
+         string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
 
-         var command = new ServiceCommand() {
+         var authInfoCommand = new ServiceCommand() {
             Command = CommandActions.AuthorizationInfo,
-            SessionKey = sessionKey
+            SessionKey = strResponse,
          };
 
-         UserEntity userEntity = sender.GetUserInfo(command);
+         var serializer2 = new XmlSerialization<ServiceCommand>();
+         stream = serializer2.Serialize(authInfoCommand);
+         btarr = new byte[stream.Length];
+         stream.Read(btarr, 0, btarr.Length);
+         string strAuthInfoCommand = Encoding.ASCII.GetString(btarr);
+
+
+         sender.SendCommand(strAuthInfoCommand);
+         btarrResponse = await sender.ReceiveData();
+         string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
       }
    }
 }

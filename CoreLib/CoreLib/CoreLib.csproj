@@ -79,8 +79,13 @@
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entity\UserEntity.cs" />
-    <Compile Include="Helpers\UdpCommandSender.cs" />
+    <Compile Include="Helpers\IListener.cs" />
+    <Compile Include="Helpers\ISender.cs" />
+    <Compile Include="Helpers\CommandListener.cs" />
+    <Compile Include="Helpers\CommandSender.cs" />
+    <Compile Include="Helpers\Responser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Serialization\XmlSerialization.cs" />
   </ItemGroup>
   <ItemGroup>

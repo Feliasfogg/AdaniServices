@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace CoreLib.Serialization {
-   public class XmlSerialization<TClass> {
+   public class XmlSerialization<TClass>:ISerializer<TClass> {
       private XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
 
       public Stream Serialize(TClass instance) {
