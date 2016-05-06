@@ -10,6 +10,8 @@ using CoreLib.Helpers;
 using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ServiceModel.Channels;
+using CoreLib.Commands.Authorization;
+using CoreLib.Commands.Common;
 using CoreLib.Entity;
 
 namespace Tests {
@@ -56,7 +58,8 @@ namespace Tests {
          sender.SendCommand(commandString);
          byte[] btarrResponse = await sender.ReceiveDataAsync();
          //сессионный ключ
-         string strResponse = Encoding.ASCII.GetString(btarrResponse);
+         string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(strSessionKey != "error");
       }
 
       [TestMethod]
@@ -76,6 +79,7 @@ namespace Tests {
 
          byte[] btarrResponse = await sender.ReceiveDataAsync();
          string strSessionKey = Encoding.ASCII.GetString(btarrResponse); //sessionkey
+         Assert.IsTrue(strSessionKey != "error");
 
          //compare authorization status
          var authInfoCommand = new ServiceCommand() {
@@ -110,6 +114,7 @@ namespace Tests {
 
          byte[] btarrResponse = await sender.ReceiveDataAsync();
          string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(strSessionKey != "error");
 
          //команда получения инфы об авторизации
          var authInfoCommand = new ServiceCommand() {
@@ -142,6 +147,55 @@ namespace Tests {
          string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
          Assert.IsTrue(strResponse == "ok");
+      }
+
+      [TestMethod]
+      public async Task DeleteUserTest() {
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         sender.GetTcpSettings();
+
+         var command = new AuthorizationCommand() {
+            Command = CommandActions.Authorization,
+            Login = "felias",
+            Password = "fenris"
+         };
+
+         var serializer1 = new XmlSerializer<AuthorizationCommand>();
+         string commandString = serializer1.SerializeToXmlString(command);
+         sender.SendCommand(commandString);
+
+         byte[] btarrResponse = await sender.ReceiveDataAsync();
+         string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(strSessionKey != "error");
+
+         //команда получения инфы об авторизации
+         var authInfoCommand = new ServiceCommand() {
+            Command = CommandActions.AuthorizationInfo,
+            SessionKey = strSessionKey,
+         };
+
+         var serializer2 = new XmlSerializer<ServiceCommand>();
+         string strAuthInfoCommand = serializer2.SerializeToXmlString(authInfoCommand);
+
+         sender.SendCommand(strAuthInfoCommand);
+         btarrResponse = await sender.ReceiveDataAsync();
+         string strUserInfo = Encoding.ASCII.GetString(btarrResponse); //get user information
+         Assert.IsTrue(strUserInfo != "error");
+
+         var serializer3 = new XmlSerializer<UserInfo>();
+         UserInfo user = serializer3.Deserialize(strUserInfo);
+
+         var deleteCommand = new DeleteUserCommand() {
+            Command = CommandActions.DeleteUser,
+            UserId = user.Id
+         };
+
+         var serializer4 = new XmlSerializer<DeleteUserCommand>();
+         string strDeleteCommand = serializer4.SerializeToXmlString(deleteCommand);
+         sender.SendCommand(strDeleteCommand);
+         btarrResponse = await sender.ReceiveDataAsync();
+         string strResult = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(strResult == "ok");
       }
    }
 }

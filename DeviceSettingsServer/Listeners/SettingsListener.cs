@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using CoreLib.Commands;
+using CoreLib.Commands.Common;
+using CoreLib.Commands.Settings;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Serialization;

@@ -27,6 +27,7 @@ namespace CoreLib.Serialization {
          var resultString = Encoding.ASCII.GetString(btarr);
          return resultString;
       }
+
       public byte[] SerializeToBytes(TClass instance) {
          var stream = new MemoryStream();
          _Serializer.Serialize(stream, instance);
@@ -37,6 +38,11 @@ namespace CoreLib.Serialization {
       }
 
       public TClass Deserialize(Stream stream) {
+         return (TClass)_Serializer.Deserialize(stream);
+      }
+
+      public TClass Deserialize(byte[] data) {
+         var stream = new MemoryStream(data);
          return (TClass)_Serializer.Deserialize(stream);
       }
 

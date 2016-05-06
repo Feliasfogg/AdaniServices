@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoreLib.Commands {
+namespace CoreLib.Commands.Common {
    [DataContract]
    public enum CommandActions {
       [EnumMember]

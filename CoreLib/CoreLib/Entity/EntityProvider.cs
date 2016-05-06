@@ -39,6 +39,21 @@ namespace CoreLib.Entity {
          return _Model.Users.FirstOrDefault(user => user.SessionKey.Key == sessionKey.Key);
       }
 
+      public bool DeleteUser(int userId) {
+         var user = _Model.Users.FirstOrDefault(usr => usr.Id == userId);
+         if(user == null) {
+            return false;
+         }
+
+         var key = _Model.SessionKeys.FirstOrDefault(sessionKey => sessionKey.User.Id == user.Id);
+         if (key != null) {
+            _Model.SessionKeys.Remove(key);
+         }
+         _Model.Users.Remove(user);
+
+         return true;
+      }
+
       public void Dispose() {
          _Model.SaveChanges();
          _Model.Dispose();

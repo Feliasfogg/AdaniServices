@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection.Emit;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,6 +64,10 @@ namespace CoreLib.Helpers {
       protected void SendResponse(byte[] bytes) {
          var responser = new Responser(_LocalTcpEp);
          responser.SendResponse(bytes);
+      }
+      protected void SendResponse(string str) {
+         var responser = new Responser(_LocalTcpEp);
+         responser.SendResponse(Encoding.ASCII.GetBytes(str));
       }
    }
 }
