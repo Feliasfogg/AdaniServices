@@ -24,11 +24,11 @@ namespace CoreLib.Helpers {
       /// </summary>
       /// <param name="broadcastAddress"></param>
       /// <param name="targetPort"></param>
-      public CommandSender(string broadcastAddress, int targetPort) {
+      public CommandSender(IPAddress broadcastAddress, int targetPort) {
          _UdpClient = new UdpClient();
          _UdpClient.EnableBroadcast = true;
-         _BroadCastAddress = new IPEndPoint(IPAddress.Parse(broadcastAddress), targetPort);
-         _RemoteUdpEndPoint = new IPEndPoint(IPAddress.Parse(broadcastAddress), targetPort);
+         _BroadCastAddress = new IPEndPoint(broadcastAddress, targetPort);
+         _RemoteUdpEndPoint = new IPEndPoint(broadcastAddress, targetPort);
       }
 
       public void SendCommand(string command) {

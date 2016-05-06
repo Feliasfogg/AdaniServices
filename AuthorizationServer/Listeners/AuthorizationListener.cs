@@ -16,68 +16,64 @@ namespace AuthorizationServer.Listeners {
       public AuthorizationListener(int listenPort, IPEndPoint localTcpEp) : base(listenPort, localTcpEp) {
       }
 
-      protected override void Parse(byte[] data) {
+      protected override async Task Parse(byte[] data) {
          string strData = Encoding.ASCII.GetString(data);
-         if (strData == "GET SETTINGS") {
+         if(strData == "GET SETTINGS") {
             base.SendTcpSettings();
-         } else {
+         }
+         else {
             var xml = new XmlDocument();
             xml.LoadXml(strData);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
             var responser = new Responser(_LocalTcpEp);
-            switch (xmlNode.InnerText) {
-               case "Authorization": {
-                     var deserializer = new XmlSerialization<AuthorizationCommand>();
-                     var command = deserializer.Deserialize(new MemoryStream(data));
-                     CommandExecute(command);
-                  }
-                  break;
-               case "AuthorizationInfo": {
-                     var deserializer = new XmlSerialization<ServiceCommand>();
-                     var command = deserializer.Deserialize(new MemoryStream(data));
-                     CommandExecute(command);
-                  }
-                  break;
-               default:
-                  break;
+            switch(xmlNode.InnerText) {
+            case "Authorization": {
+               Authorize(data);
+            }
+               break;
+            case "AuthorizationInfo": {
+               SendAuthorizationInfo(data);
+            }
+               break;
+            case "EditUser": {
+               EditUserInfo(data);
+            }
+               break;
+            default:
+               break;
             }
          }
       }
 
+     
 
-      protected override void CommandExecute(ServiceCommand command) {
-         switch (command.Command) {
-            case CommandActions.AuthorizationInfo:
-               SendAuthorizationInfo(command);
-               break;
-            case CommandActions.Authorization:
-               Authorize(command);
-               break;
-         }
-      }
 
-      private void Authorize(ServiceCommand command) {
-         var authCommand = (AuthorizationCommand)command;
-         using (var provider = new EntityProvider()) {
-            User user = provider.GetUserByCredentials(authCommand.Login, authCommand.Password);
-            var responser = new Responser(_LocalTcpEp);
-            if (user != null) {
+      private void Authorize(byte[] data) {
+         var deserializer = new XmlSerializer<AuthorizationCommand>();
+         var command = deserializer.Deserialize(new MemoryStream(data));
+         using(var provider = new EntityProvider()) {
+            User user = provider.GetUserByCredentials(command.Login, command.Password);
+            if(user != null) {
                string sessionKey = provider.CreateSessionKey(user);
-               responser.SendResponse(Encoding.ASCII.GetBytes(sessionKey));
-            } else {
-               responser.SendResponse(Encoding.ASCII.GetBytes("error"));
+               SendResponse(Encoding.ASCII.GetBytes(sessionKey));
+            }
+            else {
+              SendResponse(Encoding.ASCII.GetBytes("error"));
             }
          }
       }
 
-      private void SendAuthorizationInfo(ServiceCommand command) {
-         using (var provider = new EntityProvider()) {
+      private void SendAuthorizationInfo(byte[] data) {
+         var deserializer = new XmlSerializer<ServiceCommand>();
+         var command = deserializer.Deserialize(new MemoryStream(data));
+         using(var provider = new EntityProvider()) {
             User user = provider.GetUserByKey(command.SessionKey);
-            if (user == null) {
+            if(user == null) {
+               SendResponse(Encoding.ASCII.GetBytes("error"));
                return;
             }
-            var userEntity = new UserEntity() {
+            var userEntity = new UserInfo() {
                Id = user.Id,
                Login = user.Login,
                Name = user.Name,
@@ -85,11 +81,28 @@ namespace AuthorizationServer.Listeners {
                AccessLevel = user.AccessLevel
             };
 
-            var serializer = new XmlSerialization<UserEntity>();
+            var serializer = new XmlSerializer<UserInfo>();
             byte[] btarr = serializer.SerializeToBytes(userEntity);
-            var responser = new Responser(_LocalTcpEp);
-            responser.SendResponse(btarr);
+
+            SendResponse(btarr);
          }
+      }
+
+      private void EditUserInfo(byte[] data) {
+         var deserializer = new XmlSerializer<EditUserCommand>();
+         var command = deserializer.Deserialize(new MemoryStream(data));
+         using(var provider = new EntityProvider()) {
+            User user = provider.GetUserById(command.Info.Id);
+            if(user == null) {
+               SendResponse(Encoding.ASCII.GetBytes("error"));
+               return;
+            }
+            user.Login = command.Info.Login;
+            user.Password = command.Info.Password;
+            user.AccessLevel = command.Info.AccessLevel;
+            user.Name = command.Info.Name;
+         }
+         SendResponse(Encoding.ASCII.GetBytes("ok"));
       }
    }
 }

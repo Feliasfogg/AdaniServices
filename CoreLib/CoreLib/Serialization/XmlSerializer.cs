@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace CoreLib.Serialization {
-   public class XmlSerialization<TClass> {
+   public class XmlSerializer<TClass> {
       private XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
 
       public Stream Serialize(TClass instance) {
@@ -37,6 +37,12 @@ namespace CoreLib.Serialization {
       }
 
       public TClass Deserialize(Stream stream) {
+         return (TClass)_Serializer.Deserialize(stream);
+      }
+
+      public TClass Deserialize(string xmlString) {
+         byte[] btarr = Encoding.ASCII.GetBytes(xmlString);
+         Stream stream = new MemoryStream(btarr);
          return (TClass)_Serializer.Deserialize(stream);
       }
    }

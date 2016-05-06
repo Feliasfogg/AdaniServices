@@ -15,13 +15,13 @@ namespace Tests {
    public class SettingsServiceTest {
       [TestMethod]
       public void GetTcpSettingsTest() {
-         var sender = new CommandSender("192.168.1.255", 4555);
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          sender.GetTcpSettings();
       }
 
       [TestMethod]
       public async Task GetDeviceSettingsTest() {
-         var authSender = new CommandSender("192.168.1.255", 4444);
+         var authSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          authSender.GetTcpSettings();
 
          var command = new AuthorizationCommand() {
@@ -30,7 +30,7 @@ namespace Tests {
             Password = "fenris"
          };
 
-         var serializer1 = new XmlSerialization<AuthorizationCommand>();
+         var serializer1 = new XmlSerializer<AuthorizationCommand>();
          string commandString = serializer1.SerializeToXmlString(command);
 
          authSender.SendCommand(commandString);
@@ -42,10 +42,10 @@ namespace Tests {
             SessionKey = strResponse
          };
 
-         var serializer2 = new XmlSerialization<DeviceSettingsCommand>();
+         var serializer2 = new XmlSerializer<DeviceSettingsCommand>();
          string strDeviceSettingsCommand = serializer2.SerializeToXmlString(deviceSettingsCommand);
 
-         var settingsCommandSender = new CommandSender("192.168.1.255", 4555);
+         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
 
          settingsCommandSender.SendCommand(strDeviceSettingsCommand);

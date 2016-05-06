@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoreLib.Entity;
 
 namespace CoreLib.Commands {
-   public class DeviceSettingsCommand:ServiceCommand {
-      public int DeviceId { get; set; }
-      public int GroupId { get; set; }
+   public class EditUserCommand: ServiceCommand {
+      public UserInfo Info { get; set; }
    }
 }

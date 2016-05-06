@@ -18,7 +18,7 @@ namespace DeviceSettingsServer.Listeners {
       public SettingsListener(int listenPort, IPEndPoint localTcpEp) : base(listenPort, localTcpEp) {
       }
 
-      protected override void Parse(byte[] data) {
+      protected override async Task Parse(byte[] data) {
          string strData = Encoding.ASCII.GetString(data);
          if(strData == "GET SETTINGS") {
             base.SendTcpSettings();
@@ -31,9 +31,7 @@ namespace DeviceSettingsServer.Listeners {
             var responser = new Responser(_LocalTcpEp);
             switch(xmlNode.InnerText) {
             case "GetDeviceSettings": {
-               var deserializer = new XmlSerialization<DeviceSettingsCommand>();
-               var command = deserializer.Deserialize(new MemoryStream(data));
-               CommandExecute(command);
+               await CheckAuthorization(data);
             }
                break;
             default:
@@ -42,39 +40,31 @@ namespace DeviceSettingsServer.Listeners {
          }
       }
 
-      protected override void CommandExecute(ServiceCommand command) {
-         switch(command.Command) {
-            case CommandActions.GetDeviceSettings:
-               CheckAuthorization(command);
-               break;
-         }
-      }
+      private async Task CheckAuthorization(byte[] data) {
+         var deserializer = new XmlSerializer<DeviceSettingsCommand>();
+         var command = deserializer.Deserialize(new MemoryStream(data));
 
-      private async Task CheckAuthorization(ServiceCommand command) {
-         var settingsCommand = (DeviceSettingsCommand)command;
-
-         var sender = new CommandSender("192.168.1.255", 4444);
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
 
          var authInfoCommand = new ServiceCommand() {
             Command = CommandActions.AuthorizationInfo,
-            SessionKey = settingsCommand.SessionKey
+            SessionKey = command.SessionKey
          };
 
-         var serializer = new XmlSerialization<ServiceCommand>();
+         var serializer = new XmlSerializer<ServiceCommand>();
          string strAuthInfoCommand = serializer.SerializeToXmlString(authInfoCommand);
-         
+
          sender.SendCommand(strAuthInfoCommand);
          byte[] btarrResponse = await sender.ReceiveDataAsync();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
 
 
-         var responser = new Responser(_LocalTcpEp);
          if(strAuthInfoResult != String.Empty) {
-            responser.SendResponse(Encoding.ASCII.GetBytes("ok"));
+           SendResponse(Encoding.ASCII.GetBytes("ok"));
          }
          else {
-            responser.SendResponse(Encoding.ASCII.GetBytes("error"));
+           SendResponse(Encoding.ASCII.GetBytes("error"));
          }
       }
    }

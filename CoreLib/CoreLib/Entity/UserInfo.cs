@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CoreLib.Entity {
 
    [DataContract]
-   public class UserEntity {
+   public class UserInfo {
       [DataMember]
       public int Id { get; set; }
       [DataMember]

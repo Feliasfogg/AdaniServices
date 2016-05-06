@@ -49,8 +49,7 @@ namespace CoreLib.Helpers {
          }
       }
 
-      protected abstract void Parse(byte[] data);
-      protected abstract void CommandExecute(ServiceCommand command);
+      protected abstract Task Parse(byte[] data);
 
       protected void SendTcpSettings() {
          var strAddress = _LocalTcpEp.ToString();
@@ -59,6 +58,11 @@ namespace CoreLib.Helpers {
          var client = new UdpClient();
          client.Connect(_RemoteEndPoint);
          client.Send(btarr, btarr.Length);
+      }
+
+      protected void SendResponse(byte[] bytes) {
+         var responser = new Responser(_LocalTcpEp);
+         responser.SendResponse(bytes);
       }
    }
 }
