@@ -7,7 +7,7 @@ using CoreLib.Commands.Common;
 using CoreLib.Entity;
 
 namespace CoreLib.Commands.Authorization {
-   public class EditUserCommand: ServiceCommand {
+   public class UserCommand: ServiceCommand {
       public UserInfo Info { get; set; }
    }
 }

@@ -30,10 +30,9 @@ namespace DeviceSettingsServer.Listeners {
             xml.LoadXml(strData);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
-            var responser = new Responser(_LocalTcpEp);
             switch(xmlNode.InnerText) {
             case "GetDeviceSettings": {
-               await CheckAuthorization(data);
+               CheckAuthorization(data);
             }
                break;
             default:
@@ -42,7 +41,7 @@ namespace DeviceSettingsServer.Listeners {
          }
       }
 
-      private async Task CheckAuthorization(byte[] data) {
+      private void CheckAuthorization(byte[] data) {
          var deserializer = new XmlSerializer<DeviceSettingsCommand>();
          var command = deserializer.Deserialize(new MemoryStream(data));
 
@@ -50,7 +49,7 @@ namespace DeviceSettingsServer.Listeners {
          sender.GetTcpSettings();
 
          var authInfoCommand = new ServiceCommand() {
-            Command = CommandActions.AuthorizationInfo,
+            Command = CommandActions.GetUserInfo,
             SessionKey = command.SessionKey
          };
 
@@ -58,15 +57,15 @@ namespace DeviceSettingsServer.Listeners {
          string strAuthInfoCommand = serializer.SerializeToXmlString(authInfoCommand);
 
          sender.SendCommand(strAuthInfoCommand);
-         byte[] btarrResponse = await sender.ReceiveDataAsync();
+         byte[] btarrResponse = sender.ReceiveData();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
 
 
          if(strAuthInfoResult != String.Empty) {
-           SendResponse(Encoding.ASCII.GetBytes("ok"));
+            SendResponse(Encoding.ASCII.GetBytes("ok"));
          }
          else {
-           SendResponse(Encoding.ASCII.GetBytes("error"));
+            SendResponse(Encoding.ASCII.GetBytes("error"));
          }
       }
    }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Helpers;
 using System.ServiceModel;
+using System.Xml.Serialization;
 using AuthorizationServer.Listeners;
 using CoreLib.Entity;
 

@@ -36,30 +36,30 @@ namespace CoreLib.Helpers {
          _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
       }
 
-      public async Task<byte[]> ReceiveDataAsync() {
-         var client = new TcpClient();
-         await client.ConnectAsync(_RemoteTcpEndPoint.Address, _RemoteTcpEndPoint.Port);
-         NetworkStream stream = client.GetStream();
+      public byte[] ReceiveData() {
+         var tcpClient = new TcpClient();
+         tcpClient.Connect(_RemoteTcpEndPoint.Address, _RemoteTcpEndPoint.Port);
+         NetworkStream stream = tcpClient.GetStream();
          List<byte> data = new List<byte>();
          byte[] buffer = new byte[1];
-
-         while(stream.DataAvailable) {
+         while (true) {
             stream.Read(buffer, 0, buffer.Length);
             data.AddRange(buffer);
+            //если данные в стриме закончились прерываем цикл
+            if(!stream.DataAvailable) break;
          }
-         client.Close();
-
+         tcpClient.Close();
          return data.ToArray();
       }
 
       public void GetTcpSettings() {
-         byte[] btarrRequest = Encoding.ASCII.GetBytes(_SettingsRequest);
-         _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
-         byte[] btarrResponse = _UdpClient.Receive(ref _RemoteUdpEndPoint);
-         string strResponse = Encoding.ASCII.GetString(btarrResponse);
-         string[] ipAdress = strResponse.Split(':');
+            byte[] btarrRequest = Encoding.ASCII.GetBytes(_SettingsRequest);
+            _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
+            byte[] btarrResponse = _UdpClient.Receive(ref _RemoteUdpEndPoint);
+            string strResponse = Encoding.ASCII.GetString(btarrResponse);
+            string[] ipAdress = strResponse.Split(':');
 
-         _RemoteTcpEndPoint = new IPEndPoint(IPAddress.Parse(ipAdress[0]), Convert.ToInt32(ipAdress[1]));
+            _RemoteTcpEndPoint = new IPEndPoint(IPAddress.Parse(ipAdress[0]), Convert.ToInt32(ipAdress[1]));
       }
    }
 }

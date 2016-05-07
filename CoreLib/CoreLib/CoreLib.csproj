@@ -56,7 +56,7 @@
     <Compile Include="Commands\Authorization\DeleteUserCommand.cs" />
     <Compile Include="Commands\Common\CommandActions.cs" />
     <Compile Include="Commands\Settings\DeviceSettingsCommand.cs" />
-    <Compile Include="Commands\Authorization\EditUserCommand.cs" />
+    <Compile Include="Commands\Authorization\UserCommand.cs" />
     <Compile Include="Commands\Common\ServiceCommand.cs" />
     <Compile Include="Entity\Device.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
@@ -93,7 +93,6 @@
     <Compile Include="Helpers\ISender.cs" />
     <Compile Include="Helpers\CommandListener.cs" />
     <Compile Include="Helpers\CommandSender.cs" />
-    <Compile Include="Helpers\Responser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,10 @@ using System.Threading.Tasks;
 namespace CoreLib.Entity {
    public class EntityProvider : IDisposable {
       private EntityDataModelContainer _Model = new EntityDataModelContainer();
+
+      public DbSet<User> Users {
+         get { return _Model.Users; }
+      }
 
       public User GetUserByCredentials(string login, string password) {
          return _Model.Users.FirstOrDefault(user => user.Login == login && user.Password == password);

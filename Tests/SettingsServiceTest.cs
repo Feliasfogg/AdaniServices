@@ -23,7 +23,7 @@ namespace Tests {
       }
 
       [TestMethod]
-      public async Task GetDeviceSettingsTest() {
+      public void GetDeviceSettingsTest() {
          var authSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          authSender.GetTcpSettings();
 
@@ -37,7 +37,7 @@ namespace Tests {
          string commandString = serializer1.SerializeToXmlString(command);
 
          authSender.SendCommand(commandString);
-         byte[] btarrResponse =await authSender.ReceiveDataAsync();
+         byte[] btarrResponse = authSender.ReceiveData();
          string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
          var deviceSettingsCommand = new DeviceSettingsCommand() {
@@ -52,7 +52,7 @@ namespace Tests {
          settingsCommandSender.GetTcpSettings();
 
          settingsCommandSender.SendCommand(strDeviceSettingsCommand);
-         btarrResponse = await settingsCommandSender.ReceiveDataAsync();
+         btarrResponse = settingsCommandSender.ReceiveData();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
          Assert.IsTrue(strAuthInfoResult != String.Empty);
       }

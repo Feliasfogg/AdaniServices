@@ -24,6 +24,7 @@ namespace CoreLib.Helpers {
       protected IPEndPoint _RemoteEndPoint;
       protected IPEndPoint _LocalTcpEp;
       protected int _ListenPort;
+      protected TcpListener _Listener;
 
       /// <summary>
       /// create instance of UdpHelper
@@ -34,6 +35,8 @@ namespace CoreLib.Helpers {
          _ListenPort = listenPort;
          _LocalTcpEp = localTcpEp;
          _RemoteEndPoint = new IPEndPoint(IPAddress.Any, 1111);
+         _Listener = new TcpListener(localTcpEp);
+         _Listener.Start();
       }
 
       public Task ListenAsync() {
@@ -62,12 +65,17 @@ namespace CoreLib.Helpers {
       }
 
       protected void SendResponse(byte[] bytes) {
-         var responser = new Responser(_LocalTcpEp);
-         responser.SendResponse(bytes);
+         TcpClient client = _Listener.AcceptTcpClient();
+         using (NetworkStream networkStream = client.GetStream()) {
+            networkStream.Write(bytes, 0, bytes.Length);
+         }
       }
       protected void SendResponse(string str) {
-         var responser = new Responser(_LocalTcpEp);
-         responser.SendResponse(Encoding.ASCII.GetBytes(str));
+         byte[] bytes = Encoding.ASCII.GetBytes(str);
+         TcpClient client = _Listener.AcceptTcpClient();
+         using (NetworkStream networkStream = client.GetStream()) {
+            networkStream.Write(bytes, 0, bytes.Length);
+         }
       }
    }
 }
