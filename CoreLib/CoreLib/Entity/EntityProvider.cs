@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoreLib.Encryption;
 
 namespace CoreLib.Entity {
    public class EntityProvider : IDisposable {
@@ -22,7 +23,7 @@ namespace CoreLib.Entity {
       }
 
       public string CreateSessionKey(User user) {
-         string sessionKey = Guid.NewGuid().ToString();
+         string sessionKey = Encrypter.CreatePassword(32);
          if(user.SessionKey == null) {
             user.SessionKey = new SessionKey() {
                Key = sessionKey,

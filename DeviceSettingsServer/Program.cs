@@ -12,8 +12,8 @@ namespace DeviceSettingsServer {
       static void Main(string[] args) {
          var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11111);
 
-         var setter = new SettingsListener(4555, localEp);
-         setter.ListenAsync();
+         var listener = new SettingsListener(4555, localEp);
+         listener.ListenUdp();
          Console.ReadLine();
       }
    }

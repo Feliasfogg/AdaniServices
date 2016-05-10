@@ -23,7 +23,7 @@ namespace Tests {
       }
 
       [TestMethod]
-      public void GetDeviceSettingsTest() {
+      public void SettingsAuthorizationTestTest() {
          var authSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          authSender.GetTcpSettings();
 
@@ -36,13 +36,13 @@ namespace Tests {
          var serializer1 = new XmlSerializer<AuthorizationCommand>();
          string commandString = serializer1.SerializeToXmlString(command);
 
-         authSender.SendCommand(commandString);
+         authSender.SendUdpCommand(commandString);
          byte[] btarrResponse = authSender.ReceiveData();
-         string strResponse = Encoding.ASCII.GetString(btarrResponse);
+         string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
 
          var deviceSettingsCommand = new DeviceSettingsCommand() {
             Command = CommandActions.GetDeviceSettings,
-            SessionKey = strResponse
+            SessionKey = strSessionKey
          };
 
          var serializer2 = new XmlSerializer<DeviceSettingsCommand>();
@@ -51,7 +51,7 @@ namespace Tests {
          var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
 
-         settingsCommandSender.SendCommand(strDeviceSettingsCommand);
+         settingsCommandSender.SendUdpCommand(strDeviceSettingsCommand);
          btarrResponse = settingsCommandSender.ReceiveData();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
          Assert.IsTrue(strAuthInfoResult != String.Empty);

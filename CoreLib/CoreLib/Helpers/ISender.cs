@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace CoreLib.Helpers {
    public interface ISender {
-      void SendCommand(string command);
+      void SendUdpCommand(string command);
    }
 }

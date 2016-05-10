@@ -20,7 +20,7 @@ namespace DeviceSettingsServer.Listeners {
       public SettingsListener(int listenPort, IPEndPoint localTcpEp) : base(listenPort, localTcpEp) {
       }
 
-      protected override async Task Parse(byte[] data) {
+      protected override void Parse(byte[] data) {
          string strData = Encoding.ASCII.GetString(data);
          if(strData == "GET SETTINGS") {
             base.SendTcpSettings();
@@ -42,6 +42,7 @@ namespace DeviceSettingsServer.Listeners {
       }
 
       private void CheckAuthorization(byte[] data) {
+         //блок получения инфы о пользователе на основе переданного сессионного ключа
          var deserializer = new XmlSerializer<DeviceSettingsCommand>();
          var command = deserializer.Deserialize(new MemoryStream(data));
 
@@ -56,17 +57,17 @@ namespace DeviceSettingsServer.Listeners {
          var serializer = new XmlSerializer<ServiceCommand>();
          string strAuthInfoCommand = serializer.SerializeToXmlString(authInfoCommand);
 
-         sender.SendCommand(strAuthInfoCommand);
+         sender.SendUdpCommand(strAuthInfoCommand);
          byte[] btarrResponse = sender.ReceiveData();
          string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
-
-
-         if(strAuthInfoResult != String.Empty) {
-            SendResponse(Encoding.ASCII.GetBytes("ok"));
-         }
-         else {
+         if (strAuthInfoResult == "error") {
             SendResponse(Encoding.ASCII.GetBytes("error"));
          }
+
+         var serizalizer2 = new XmlSerializer<UserInfo>();
+         //десериализация xml в объект пользователя
+         var userInfo = serizalizer2.Deserialize(btarrResponse);
+         SendResponse("ok");
       }
    }
 }

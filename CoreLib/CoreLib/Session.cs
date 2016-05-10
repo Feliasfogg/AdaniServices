@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoreLib.Helpers {
-   public interface IListener {
-      void ListenUdp();
-      void ListenTcp();
+namespace CoreLib {
+   public class Session {
+      private string _Key;
+
    }
 }

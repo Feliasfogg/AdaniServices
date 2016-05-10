@@ -9,6 +9,7 @@ using System.Xml;
 using CoreLib.Commands;
 using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
+using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
@@ -18,31 +19,35 @@ namespace AuthorizationServer.Listeners {
       public AuthorizationListener(int listenPort, IPEndPoint localTcpEp) : base(listenPort, localTcpEp) {
       }
 
-      protected override async Task Parse(byte[] data) {
+      protected override void Parse(byte[] data) {
          string strData = Encoding.ASCII.GetString(data);
          if(strData == "GET SETTINGS") {
             base.SendTcpSettings();
          }
          else {
+            string pass = strData.Substring(strData.Length - 8);
+            strData = strData.Substring(0, strData.Length - 8);
+            string decryptXml = Encrypter.Decrypt(strData, pass);
+
             var xml = new XmlDocument();
-            xml.LoadXml(strData);
+            xml.LoadXml(decryptXml);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
             switch(xmlNode.InnerText) {
             case "Authorization":
-               Authorize(data);
+               Authorize(decryptXml);
                break;
             case "GetUserInfo":
-               GetUserInfo(data);
+               GetUserInfo(decryptXml);
                break;
             case "EditUser":
-               EditUserInfo(data);
+               EditUserInfo(decryptXml);
                break;
             case "DeleteUser":
-               DeleteUser(data);
+               DeleteUser(decryptXml);
                break;
             case "AddUser":
-               AddUser(data);
+               AddUser(decryptXml);
                break;
             default:
                break;
@@ -51,10 +56,10 @@ namespace AuthorizationServer.Listeners {
       }
 
 
-      private void Authorize(byte[] data) {
+      private void Authorize(string xml) {
          try {
             var deserializer = new XmlSerializer<AuthorizationCommand>();
-            var command = deserializer.Deserialize(data);
+            var command = deserializer.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByCredentials(command.Login, command.Password);
                if(user != null) {
@@ -62,24 +67,23 @@ namespace AuthorizationServer.Listeners {
                   SendResponse(sessionKey);
                }
                else {
-                  SendResponse("error");
+                  throw new Exception();
                }
             }
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse("error");
          }
       }
 
-      private void GetUserInfo(byte[] data) {
+      private void GetUserInfo(string xml) {
          try {
             var deserializer = new XmlSerializer<ServiceCommand>();
-            var command = deserializer.Deserialize(data);
+            var command = deserializer.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
-                  SendResponse("error");
-                  return;
+                  throw new Exception();
                }
                var userEntity = new UserInfo() {
                   Id = user.Id,
@@ -96,19 +100,18 @@ namespace AuthorizationServer.Listeners {
             }
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse("error");
          }
       }
 
-      private void EditUserInfo(byte[] data) {
+      private void EditUserInfo(string xml) {
          try {
             var deserializer = new XmlSerializer<UserCommand>();
-            var command = deserializer.Deserialize(data);
+            var command = deserializer.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserById(command.Info.Id);
                if(user == null) {
-                  SendResponse("error");
-                  return;
+                  throw new Exception();
                }
                user.Login = command.Info.Login;
                user.Password = command.Info.Password;
@@ -118,14 +121,14 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse("error");
          }
       }
 
-      private void DeleteUser(byte[] data) {
+      private void DeleteUser(string xml) {
          try {
             var deserializer = new XmlSerializer<DeleteUserCommand>();
-            var command = deserializer.Deserialize(data);
+            var command = deserializer.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                bool result = provider.DeleteUser(command.UserId);
                if(result) {
@@ -137,14 +140,14 @@ namespace AuthorizationServer.Listeners {
             }
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse("error");
          }
       }
 
-      private void AddUser(byte[] data) {
+      private void AddUser(string xml) {
          try {
             var deserializer = new XmlSerializer<UserCommand>();
-            var command = deserializer.Deserialize(data);
+            var command = deserializer.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                var user = new User() {
                   Login = command.Info.Login,
@@ -157,7 +160,7 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse("error");
          }
       }
    }
