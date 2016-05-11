@@ -60,6 +60,10 @@ namespace CoreLib.Entity {
          return true;
       }
 
+      public Device GetDeviceInfo(int deviceId) {
+         return _Model.Devices.FirstOrDefault(device => device.Id == deviceId);
+      }
+
       public void Dispose() {
          _Model.SaveChanges();
          _Model.Dispose();

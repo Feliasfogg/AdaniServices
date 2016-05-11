@@ -11,6 +11,7 @@ using System.Xml;
 using CoreLib.Commands;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
+using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
@@ -26,14 +27,20 @@ namespace DeviceSettingsServer.Listeners {
             base.SendTcpSettings();
          }
          else {
+            //дешифровка
+            string publicKey = strData.Substring(strData.Length - 8);
+            string hash = Encrypter.GeneratePasswordHash(publicKey);
+            strData = strData.Substring(0, strData.Length - 8);
+            string decryptXml = Encrypter.Decrypt(strData, hash);
+            //парсинг результирующего xml
             var xml = new XmlDocument();
-            xml.LoadXml(strData);
+            xml.LoadXml(decryptXml);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
+            //выбор команды для выполнения
             switch(xmlNode.InnerText) {
-            case "GetDeviceSettings": {
-               CheckAuthorization(data);
-            }
+            case "GetDeviceSettings":
+               GetDeviceSettings(decryptXml);
                break;
             default:
                break;
@@ -41,33 +48,68 @@ namespace DeviceSettingsServer.Listeners {
          }
       }
 
-      private void CheckAuthorization(byte[] data) {
-         //блок получения инфы о пользователе на основе переданного сессионного ключа
-         var deserializer = new XmlSerializer<DeviceSettingsCommand>();
-         var command = deserializer.Deserialize(new MemoryStream(data));
+      private UserEntity GetUserInfo(string sessionKey) {
+         try {
+            var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+            sender.GetTcpSettings();
 
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
-         sender.GetTcpSettings();
+            var authInfoCommand = new ServiceCommand() {
+               Command = CommandActions.GetUserInfo,
+               SessionKey = sessionKey
+            };
 
-         var authInfoCommand = new ServiceCommand() {
-            Command = CommandActions.GetUserInfo,
-            SessionKey = command.SessionKey
-         };
+            string strAuthInfoCommand = XmlSerializer<ServiceCommand>.SerializeToXmlString(authInfoCommand);
 
-         var serializer = new XmlSerializer<ServiceCommand>();
-         string strAuthInfoCommand = serializer.SerializeToXmlString(authInfoCommand);
+            sender.SendUdpCommand(strAuthInfoCommand);
+            byte[] btarrResponse = sender.ReceiveData();
+            string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
 
-         sender.SendUdpCommand(strAuthInfoCommand);
-         byte[] btarrResponse = sender.ReceiveData();
-         string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
-         if (strAuthInfoResult == "error") {
-            SendResponse(Encoding.ASCII.GetBytes("error"));
+            //десериализация xml в объект пользователя
+            var userInfo = XmlSerializer<UserEntity>.Deserialize(btarrResponse);
+            return userInfo;
          }
+         catch(Exception ex) {
+            return null;
+         }
+      }
 
-         var serizalizer2 = new XmlSerializer<UserInfo>();
-         //десериализация xml в объект пользователя
-         var userInfo = serizalizer2.Deserialize(btarrResponse);
-         SendResponse("ok");
+      private void GetDeviceSettings(string xml) {
+         try {
+            var command = XmlSerializer<DeviceSettingsCommand>.Deserialize(xml);
+
+            UserEntity user = GetUserInfo(command.SessionKey);
+            if(user == null) {
+               throw new Exception();
+            }
+            DeviceEntity deviceEntity;
+            using(var provider = new EntityProvider()) {
+               Device device = provider.GetDeviceInfo(command.DeviceId);
+               if(device == null) {
+                  throw new Exception();
+               }
+               deviceEntity = new DeviceEntity() {
+                  Id = device.Id,
+                  Name = device.Name,
+                  ConnectionType = device.ConnectionType,
+                  DeviceGroupId = device.DeviceGroupId,
+                  GeneratorType = device.GeneratorType,
+                  HighCurrent = device.HighCurrent,
+                  NormalCurrent = device.NormalCurrent,
+                  HighMode = device.HighMode,
+                  HighVoltage = device.HighVoltage,
+                  NormalVoltage = device.NormalVoltage,
+                  LastWorkedDate = device.LastWorkedDate,
+                  ReseasonDate = device.ReseasonDate,
+                  WorkTime = device.WorkTime,
+                  XRayTime = device.XRayTime
+               };
+               string xmlString = XmlSerializer<DeviceEntity>.SerializeToXmlString(deviceEntity);
+               SendResponse(xmlString);
+            }
+         }
+         catch(Exception ex) {
+            SendResponse("error");
+         }
       }
    }
 }

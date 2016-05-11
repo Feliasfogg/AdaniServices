@@ -9,6 +9,7 @@ using CoreLib.Commands;
 using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
+using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,38 +24,38 @@ namespace Tests {
       }
 
       [TestMethod]
-      public void SettingsAuthorizationTestTest() {
+      public void GetDeviceInfoTest() {
          var authSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          authSender.GetTcpSettings();
 
-         var command = new AuthorizationCommand() {
+         var authCommand = new AuthorizationCommand() {
             Command = CommandActions.Authorization,
             Login = "felias",
             Password = "fenris"
          };
 
-         var serializer1 = new XmlSerializer<AuthorizationCommand>();
-         string commandString = serializer1.SerializeToXmlString(command);
+         string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
 
-         authSender.SendUdpCommand(commandString);
+         authSender.SendUdpCommand(authCommandXml);
          byte[] btarrResponse = authSender.ReceiveData();
          string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
-
-         var deviceSettingsCommand = new DeviceSettingsCommand() {
-            Command = CommandActions.GetDeviceSettings,
-            SessionKey = strSessionKey
-         };
-
-         var serializer2 = new XmlSerializer<DeviceSettingsCommand>();
-         string strDeviceSettingsCommand = serializer2.SerializeToXmlString(deviceSettingsCommand);
+         Assert.IsTrue(strSessionKey != String.Empty && strSessionKey != "error");
 
          var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
 
-         settingsCommandSender.SendUdpCommand(strDeviceSettingsCommand);
+         var deviceSettingsCommand = new DeviceSettingsCommand() {
+            Command = CommandActions.GetDeviceSettings,
+            SessionKey = strSessionKey,
+            DeviceId = 2
+         };
+
+         string deviceSettingsCommandXml = XmlSerializer<DeviceSettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+         settingsCommandSender.SendUdpCommand(deviceSettingsCommandXml);
          btarrResponse = settingsCommandSender.ReceiveData();
-         string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
-         Assert.IsTrue(strAuthInfoResult != String.Empty);
+         Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) != "error");
+         DeviceEntity device = XmlSerializer<DeviceEntity>.Deserialize(btarrResponse);
       }
    }
 }

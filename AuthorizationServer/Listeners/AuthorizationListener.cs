@@ -27,15 +27,17 @@ namespace AuthorizationServer.Listeners {
             base.SendTcpSettings();
          }
          else {
+            //дешифровка
             string publicKey = strData.Substring(strData.Length - 8);
             string hash = Encrypter.GeneratePasswordHash(publicKey);
             strData = strData.Substring(0, strData.Length - 8);
             string decryptXml = Encrypter.Decrypt(strData, hash);
-
+            //парсинг результирующего xml
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
+            //выбор команды для выполнения
             switch(xmlNode.InnerText) {
             case "Authorization":
                Authorize(decryptXml);
@@ -61,8 +63,7 @@ namespace AuthorizationServer.Listeners {
 
       private void Authorize(string xml) {
          try {
-            var deserializer = new XmlSerializer<AuthorizationCommand>();
-            var command = deserializer.Deserialize(xml);
+            var command = XmlSerializer<AuthorizationCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByCredentials(command.Login, command.Password);
                if(user != null) {
@@ -81,14 +82,13 @@ namespace AuthorizationServer.Listeners {
 
       private void GetUserInfo(string xml) {
          try {
-            var deserializer = new XmlSerializer<ServiceCommand>();
-            var command = deserializer.Deserialize(xml);
+            var command = XmlSerializer<ServiceCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
                   throw new Exception();
                }
-               var userEntity = new UserInfo() {
+               var userEntity = new UserEntity() {
                   Id = user.Id,
                   Login = user.Login,
                   Name = user.Name,
@@ -96,10 +96,9 @@ namespace AuthorizationServer.Listeners {
                   AccessLevel = user.AccessLevel
                };
 
-               var serializer = new XmlSerializer<UserInfo>();
-               byte[] btarr = serializer.SerializeToBytes(userEntity);
+               string xmlString = XmlSerializer<UserEntity>.SerializeToXmlString(userEntity);
 
-               SendResponse(btarr);
+               SendResponse(xmlString);
             }
          }
          catch(Exception ex) {
@@ -109,17 +108,16 @@ namespace AuthorizationServer.Listeners {
 
       private void EditUserInfo(string xml) {
          try {
-            var deserializer = new XmlSerializer<UserCommand>();
-            var command = deserializer.Deserialize(xml);
+            var command = XmlSerializer<UserCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
-               User user = provider.GetUserById(command.Info.Id);
+               User user = provider.GetUserById(command.User.Id);
                if(user == null) {
                   throw new Exception();
                }
-               user.Login = command.Info.Login;
-               user.Password = command.Info.Password;
-               user.AccessLevel = command.Info.AccessLevel;
-               user.Name = command.Info.Name;
+               user.Login = command.User.Login;
+               user.Password = command.User.Password;
+               user.AccessLevel = command.User.AccessLevel;
+               user.Name = command.User.Name;
             }
             SendResponse("ok");
          }
@@ -130,8 +128,7 @@ namespace AuthorizationServer.Listeners {
 
       private void DeleteUser(string xml) {
          try {
-            var deserializer = new XmlSerializer<DeleteUserCommand>();
-            var command = deserializer.Deserialize(xml);
+            var command = XmlSerializer<DeleteUserCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                bool result = provider.DeleteUser(command.UserId);
                if(result) {
@@ -149,14 +146,13 @@ namespace AuthorizationServer.Listeners {
 
       private void AddUser(string xml) {
          try {
-            var deserializer = new XmlSerializer<UserCommand>();
-            var command = deserializer.Deserialize(xml);
+            var command = XmlSerializer<UserCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                var user = new User() {
-                  Login = command.Info.Login,
-                  Password = command.Info.Password,
-                  AccessLevel = command.Info.AccessLevel,
-                  Name = command.Info.Name
+                  Login = command.User.Login,
+                  Password = command.User.Password,
+                  AccessLevel = command.User.AccessLevel,
+                  Name = command.User.Name
                };
                provider.Users.Add(user);
             }

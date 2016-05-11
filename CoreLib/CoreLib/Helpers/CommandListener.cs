@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.ServiceModel;
 using System.Text;
@@ -92,24 +93,10 @@ namespace CoreLib.Helpers {
          client.Send(btarr, btarr.Length);
       }
 
-      protected void SendResponse(byte[] bytes) {
-         string data = Encoding.ASCII.GetString(bytes);
-         string publicKey = Encrypter.GeneratePassword(8);
-         string hash = Encrypter.GeneratePasswordHash(publicKey);
-         string encryptedString = Encrypter.Encrypt(data, hash);
-         encryptedString += publicKey;
-
-         bytes = Encoding.ASCII.GetBytes(encryptedString);
-         TcpClient client = _TcpListener.AcceptTcpClient();
-         using(NetworkStream networkStream = client.GetStream()) {
-            networkStream.Write(bytes, 0, bytes.Length);
-         }
-      }
-
       protected void SendResponse(string str) {
          string publicKey = Encrypter.GeneratePassword(8);
-         string hash = Encrypter.GeneratePasswordHash(publicKey);
-         string encryptedString = Encrypter.Encrypt(str, hash);
+         string privateKey = Encrypter.GeneratePasswordHash(publicKey);
+         string encryptedString = Encrypter.Encrypt(str, privateKey);
          encryptedString += publicKey;
 
          byte[] bytes = Encoding.ASCII.GetBytes(encryptedString);
@@ -117,6 +104,11 @@ namespace CoreLib.Helpers {
          using(NetworkStream networkStream = client.GetStream()) {
             networkStream.Write(bytes, 0, bytes.Length);
          }
+      }
+
+      protected void SendResponse(byte[] bytes) {
+         string data = Encoding.ASCII.GetString(bytes);
+         SendResponse(data);
       }
    }
 }

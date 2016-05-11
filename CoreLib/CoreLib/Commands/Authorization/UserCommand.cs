@@ -8,6 +8,6 @@ using CoreLib.Entity;
 
 namespace CoreLib.Commands.Authorization {
    public class UserCommand: ServiceCommand {
-      public UserInfo Info { get; set; }
+      public UserEntity User { get; set; }
    }
 }

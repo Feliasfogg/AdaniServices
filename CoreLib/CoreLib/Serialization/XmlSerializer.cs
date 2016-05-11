@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace CoreLib.Serialization {
-   public class XmlSerializer<TClass> {
-      private XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
-
-      public Stream Serialize(TClass instance) {
+   public static class XmlSerializer<TClass> {
+      public static Stream Serialize(TClass instance) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          var stream = new MemoryStream();
          _Serializer.Serialize(stream, instance);
          stream.Position = 0;
          return stream;
       }
 
-      public string SerializeToXmlString(TClass instance) {
+      public static string SerializeToXmlString(TClass instance) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          var stream = new MemoryStream();
          _Serializer.Serialize(stream, instance);
          stream.Position = 0;
@@ -28,7 +28,8 @@ namespace CoreLib.Serialization {
          return resultString;
       }
 
-      public byte[] SerializeToBytes(TClass instance) {
+      public static byte[] SerializeToBytes(TClass instance) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          var stream = new MemoryStream();
          _Serializer.Serialize(stream, instance);
          stream.Position = 0;
@@ -37,16 +38,19 @@ namespace CoreLib.Serialization {
          return btarr;
       }
 
-      public TClass Deserialize(Stream stream) {
+      public static TClass Deserialize(Stream stream) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          return (TClass)_Serializer.Deserialize(stream);
       }
 
-      public TClass Deserialize(byte[] data) {
+      public static TClass Deserialize(byte[] data) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          var stream = new MemoryStream(data);
          return (TClass)_Serializer.Deserialize(stream);
       }
 
-      public TClass Deserialize(string xmlString) {
+      public static TClass Deserialize(string xmlString) {
+         XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
          byte[] btarr = Encoding.ASCII.GetBytes(xmlString);
          Stream stream = new MemoryStream(btarr);
          return (TClass)_Serializer.Deserialize(stream);
