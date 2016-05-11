@@ -35,13 +35,14 @@ namespace CoreLib.Helpers {
 
       public void SendUdpCommand(string command) {
          command = CreateEncryptedCommand(command);
-         byte[] btarrRequest = Encoding.ASCII.GetBytes(command);
-         _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
+         byte[] bytes = Encoding.ASCII.GetBytes(command);
+         _UdpClient.Send(bytes, bytes.Length, _BroadCastAddress);
       }
 
       public void SendTcpCommand(string command) {
          var tcpClient = new TcpClient();
          tcpClient.Connect(_RemoteTcpEndPoint);
+         command = CreateEncryptedCommand(command);
          byte[] bytes = Encoding.ASCII.GetBytes(command);
          using(NetworkStream stream = tcpClient.GetStream()) {
             stream.Write(bytes, 0, bytes.Length);

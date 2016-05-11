@@ -43,28 +43,31 @@ namespace CoreLib.Helpers {
       public Task ListenTcpAsync() {
          return Task.Run(() => ListenTcp());
       }
+
       public Task ListenUdpAsync() {
          return Task.Run(() => ListenUdp());
       }
 
       public void ListenTcp() {
-         TcpClient client = _TcpListener.AcceptTcpClient();
+         while(true) {
+            TcpClient client = _TcpListener.AcceptTcpClient();
 
-         List<byte> data = new List<byte>();
-         byte[] buffer = new byte[1];
-         using(NetworkStream stream = client.GetStream()) {
-            while(true) {
-               stream.Read(buffer, 0, buffer.Length);
-               data.AddRange(buffer);
-               //если данные в стриме закончились прерываем цикл
-               if(!stream.DataAvailable) {
-                  break;
+            List<byte> data = new List<byte>();
+            byte[] buffer = new byte[1];
+            using(NetworkStream stream = client.GetStream()) {
+               while(true) {
+                  stream.Read(buffer, 0, buffer.Length);
+                  data.AddRange(buffer);
+                  //если данные в стриме закончились прерываем цикл
+                  if(!stream.DataAvailable) {
+                     break;
+                  }
                }
             }
-         }
-         client.Close();
+            client.Close();
 
-         Task.Run(() => Parse(data.ToArray()));
+            Task.Run(() => Parse(data.ToArray()));
+         }
       }
 
       public void ListenUdp() {
@@ -96,10 +99,11 @@ namespace CoreLib.Helpers {
 
          bytes = Encoding.ASCII.GetBytes(encryptedString);
          TcpClient client = _TcpListener.AcceptTcpClient();
-         using (NetworkStream networkStream = client.GetStream()) {
+         using(NetworkStream networkStream = client.GetStream()) {
             networkStream.Write(bytes, 0, bytes.Length);
          }
       }
+
       protected void SendResponse(string str) {
          string pass = Encrypter.CreatePassword(8);
          string encryptedString = Encrypter.Encrypt(str, pass);
@@ -107,7 +111,7 @@ namespace CoreLib.Helpers {
 
          byte[] bytes = Encoding.ASCII.GetBytes(encryptedString);
          TcpClient client = _TcpListener.AcceptTcpClient();
-         using (NetworkStream networkStream = client.GetStream()) {
+         using(NetworkStream networkStream = client.GetStream()) {
             networkStream.Write(bytes, 0, bytes.Length);
          }
       }

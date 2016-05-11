@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace CoreLib {
    public class Session {
-      private string _Key;
+      private string _PublicKey;
+      private string _PrivateKey;
+      private string _SessionKey;
 
    }
 }
