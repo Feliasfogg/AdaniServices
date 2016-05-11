@@ -16,7 +16,7 @@ using Microsoft.SqlServer.Server;
 namespace CoreLib.Helpers {
    public class CommandSender : ISender {
       private UdpClient _UdpClient;
-      private const string _SettingsRequest = "GET SETTINGS";
+
       private IPEndPoint _BroadCastAddress;
       private IPEndPoint _RemoteUdpEndPoint;
       private IPEndPoint _RemoteTcpEndPoint;
@@ -50,9 +50,10 @@ namespace CoreLib.Helpers {
       }
 
       private string CreateEncryptedCommand(string strCommand) {
-         string password = Encrypter.CreatePassword(8);
-         string encryptCommand = Encrypter.Encrypt(strCommand, password);
-         encryptCommand += password;
+         string publicKey = Encrypter.GeneratePassword(8);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string encryptCommand = Encrypter.Encrypt(strCommand, hash);
+         encryptCommand += publicKey;
          return encryptCommand;
       }
 
@@ -61,7 +62,7 @@ namespace CoreLib.Helpers {
          tcpClient.Connect(_RemoteTcpEndPoint);
          List<byte> data = new List<byte>();
          byte[] buffer = new byte[1];
-         using (NetworkStream stream = tcpClient.GetStream()) {
+         using(NetworkStream stream = tcpClient.GetStream()) {
             while(true) {
                stream.Read(buffer, 0, buffer.Length);
                data.AddRange(buffer);
@@ -72,18 +73,21 @@ namespace CoreLib.Helpers {
             }
          }
          tcpClient.Close();
+
          //расшифровка данных
          string encryptedString = Encoding.ASCII.GetString(data.ToArray());
-         string pass = encryptedString.Substring(encryptedString.Length - 8);
+         string publicKey = encryptedString.Substring(encryptedString.Length - 8);
          encryptedString = encryptedString.Substring(0, encryptedString.Length - 8);
-         string decryptString = Encrypter.Decrypt(encryptedString, pass);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string decryptString = Encrypter.Decrypt(encryptedString, hash);
 
          return Encoding.ASCII.GetBytes(decryptString);
       }
 
 
       public void GetTcpSettings() {
-         byte[] btarrRequest = Encoding.ASCII.GetBytes(_SettingsRequest);
+         const string settings = "GET SETTINGS";
+         byte[] btarrRequest = Encoding.ASCII.GetBytes(settings);
          _UdpClient.Send(btarrRequest, btarrRequest.Length, _BroadCastAddress);
          byte[] btarrResponse = _UdpClient.Receive(ref _RemoteUdpEndPoint);
          string strResponse = Encoding.ASCII.GetString(btarrResponse);

@@ -74,7 +74,7 @@ namespace CoreLib.Encryption {
          }
       }
 
-      public static string CreatePassword(int length) {
+      public static string GeneratePassword(int length) {
          const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
          StringBuilder res = new StringBuilder();
          var random = new Random();
@@ -82,6 +82,18 @@ namespace CoreLib.Encryption {
             res.Append(chars[random.Next(chars.Length)]);
          }
          return res.ToString();
+      }
+
+      public static string GeneratePasswordHash(string thisPassword) {
+         MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+         byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(thisPassword); // Turn password into byte array
+         byte[] tmpHash = md5.ComputeHash(tmpSource);
+
+         StringBuilder output = new StringBuilder(tmpHash.Length);
+         for(int i = 0; i < tmpHash.Length; i++) {
+            output.Append(tmpHash[i].ToString("X2")); // X2 formats to hexadecimal
+         }
+         return output.ToString();
       }
 
       private static byte[] Generate256BitsOfRandomEntropy() {

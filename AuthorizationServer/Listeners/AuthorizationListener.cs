@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using CoreLib;
 using CoreLib.Commands;
 using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
@@ -25,9 +27,10 @@ namespace AuthorizationServer.Listeners {
             base.SendTcpSettings();
          }
          else {
-            string pass = strData.Substring(strData.Length - 8);
+            string publicKey = strData.Substring(strData.Length - 8);
+            string hash = Encrypter.GeneratePasswordHash(publicKey);
             strData = strData.Substring(0, strData.Length - 8);
-            string decryptXml = Encrypter.Decrypt(strData, pass);
+            string decryptXml = Encrypter.Decrypt(strData, hash);
 
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);

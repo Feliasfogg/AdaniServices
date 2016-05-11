@@ -23,7 +23,7 @@ namespace CoreLib.Entity {
       }
 
       public string CreateSessionKey(User user) {
-         string sessionKey = Encrypter.CreatePassword(32);
+         string sessionKey = Encrypter.GeneratePassword(32);
          if(user.SessionKey == null) {
             user.SessionKey = new SessionKey() {
                Key = sessionKey,

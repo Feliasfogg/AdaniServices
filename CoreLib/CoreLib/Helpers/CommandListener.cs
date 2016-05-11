@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection.Emit;
+using System.Security.Cryptography.Xml;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,9 +94,10 @@ namespace CoreLib.Helpers {
 
       protected void SendResponse(byte[] bytes) {
          string data = Encoding.ASCII.GetString(bytes);
-         string pass = Encrypter.CreatePassword(8);
-         string encryptedString = Encrypter.Encrypt(data, pass);
-         encryptedString += pass;
+         string publicKey = Encrypter.GeneratePassword(8);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string encryptedString = Encrypter.Encrypt(data, hash);
+         encryptedString += publicKey;
 
          bytes = Encoding.ASCII.GetBytes(encryptedString);
          TcpClient client = _TcpListener.AcceptTcpClient();
@@ -105,9 +107,10 @@ namespace CoreLib.Helpers {
       }
 
       protected void SendResponse(string str) {
-         string pass = Encrypter.CreatePassword(8);
-         string encryptedString = Encrypter.Encrypt(str, pass);
-         encryptedString += pass;
+         string publicKey = Encrypter.GeneratePassword(8);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string encryptedString = Encrypter.Encrypt(str, hash);
+         encryptedString += publicKey;
 
          byte[] bytes = Encoding.ASCII.GetBytes(encryptedString);
          TcpClient client = _TcpListener.AcceptTcpClient();
