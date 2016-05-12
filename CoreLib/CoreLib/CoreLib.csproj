@@ -62,6 +62,7 @@
     <Compile Include="Entity\Device.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\DeviceEntity.cs" />
     <Compile Include="Entity\DeviceGroup.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
@@ -84,7 +85,6 @@
     <Compile Include="Entity\SessionKey.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entity\DeviceEntity.cs" />
     <Compile Include="Entity\User.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>

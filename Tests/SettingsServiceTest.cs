@@ -35,11 +35,9 @@ namespace Tests {
          };
 
          string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
-
          authSender.SendTcpCommand(authCommandXml);
          byte[] btarrResponse = authSender.ReceiveData();
          string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
-         Assert.IsTrue(strSessionKey != String.Empty && strSessionKey != "error");
 
          var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
@@ -55,7 +53,7 @@ namespace Tests {
          settingsCommandSender.SendTcpCommand(deviceSettingsCommandXml);
          btarrResponse = settingsCommandSender.ReceiveData();
          Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) != "error");
-         DeviceEntity device = XmlSerializer<DeviceEntity>.Deserialize(btarrResponse);
+         Device device = XmlSerializer<Device>.Deserialize(btarrResponse);
       }
    }
 }

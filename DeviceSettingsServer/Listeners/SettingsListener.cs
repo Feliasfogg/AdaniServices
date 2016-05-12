@@ -60,12 +60,11 @@ namespace DeviceSettingsServer.Listeners {
 
             string strAuthInfoCommand = XmlSerializer<ServiceCommand>.SerializeToXmlString(authInfoCommand);
 
-            sender.SendBroadcastCommand(strAuthInfoCommand);
+            sender.SendTcpCommand(strAuthInfoCommand);
             byte[] btarrResponse = sender.ReceiveData();
             string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
-
             //десериализация xml в объект пользователя
-            var userInfo = XmlSerializer<User>.Deserialize(btarrResponse);
+            var userInfo = XmlSerializer<User>.Deserialize(strAuthInfoResult);
             return userInfo;
          }
          catch {
@@ -79,33 +78,18 @@ namespace DeviceSettingsServer.Listeners {
 
             User user = GetUserInfo(command.SessionKey);
             if(user == null) {
-               throw new Exception();
+               throw new Exception("Cant get user info");
             }
-            DeviceEntity deviceEntity;
+            Device deviceEntity;
+            string xmlString;
             using(var provider = new EntityProvider()) {
                Device device = provider.GetDeviceInfo(command.DeviceId);
                if(device == null) {
                   throw new Exception("Cant get device information");
                }
-               deviceEntity = new DeviceEntity() {
-                  Id = device.Id,
-                  Name = device.Name,
-                  ConnectionType = device.ConnectionType,
-                  DeviceGroupId = device.DeviceGroupId,
-                  GeneratorType = device.GeneratorType,
-                  HighCurrent = device.HighCurrent,
-                  NormalCurrent = device.NormalCurrent,
-                  HighMode = device.HighMode,
-                  HighVoltage = device.HighVoltage,
-                  NormalVoltage = device.NormalVoltage,
-                  LastWorkedDate = device.LastWorkedDate,
-                  ReseasonDate = device.ReseasonDate,
-                  WorkTime = device.WorkTime,
-                  XRayTime = device.XRayTime
-               };
-               string xmlString = XmlSerializer<DeviceEntity>.SerializeToXmlString(deviceEntity);
-               SendResponse(xmlString);
+               xmlString = XmlSerializer<Device>.SerializeToXmlString(device);
             }
+            SendResponse(xmlString);
          }
          catch(Exception ex) {
             SendResponse(ex.Message);

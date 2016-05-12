@@ -27,7 +27,7 @@ namespace CoreLib.Entity {
       }
 
       public bool AddUser(User user) {
-         //незабыть потом снова включить проверку
+         //TODO незабыть потом снова включить проверку
          //var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
          //if(existUser != null) {
          //   return false;
