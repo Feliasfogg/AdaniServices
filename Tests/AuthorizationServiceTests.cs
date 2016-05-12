@@ -46,7 +46,7 @@ namespace Tests {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
          //создание юзера
-         var newUser = new UserEntity() {
+         var newUser = new User() {
             Login = "felias",
             Password = "fenris",
             Name = "pavel",
@@ -89,7 +89,7 @@ namespace Tests {
          bytes = sender.ReceiveData();
          string strUserInfo = Encoding.ASCII.GetString(bytes); //инфа о пользователе
          Assert.IsTrue(strUserInfo != "error" && strUserInfo != String.Empty);
-         UserEntity user = XmlSerializer<UserEntity>.Deserialize(strUserInfo); //десериализация строки инфы о пользователе в объект
+         User user = XmlSerializer<User>.Deserialize(strUserInfo); //десериализация строки инфы о пользователе в объект
 
          //удаление пользователя
          var deleteCommand = new DeleteUserCommand() {
@@ -112,7 +112,7 @@ namespace Tests {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
          //создание юзера
-         var newUser = new UserEntity() {
+         var newUser = new User() {
             Login = "felias",
             Password = "fenris",
             Name = "pavel",
@@ -152,7 +152,7 @@ namespace Tests {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
          //создание юзера
-         var newUser = new UserEntity() {
+         var newUser = new User() {
             Login = "felias",
             Password = "fenris",
             Name = "pavel",
@@ -195,7 +195,7 @@ namespace Tests {
          bytes = sender.ReceiveData();
          string userInfoXml = Encoding.ASCII.GetString(bytes); //инфа о пользователе
 
-         UserEntity user = XmlSerializer<UserEntity>.Deserialize(userInfoXml); //десериализация строки инфы о пользователе в объект
+         User user = XmlSerializer<User>.Deserialize(userInfoXml); //десериализация строки инфы о пользователе в объект
          Assert.IsTrue(user.Login == authCommand.Login && user.Password == authCommand.Password);
       }
 
@@ -207,7 +207,7 @@ namespace Tests {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
          //создание юзера
-         var newUser = new UserEntity() {
+         var newUser = new User() {
             Login = "felias",
             Password = "fenris",
             Name = "pavel",
@@ -249,7 +249,7 @@ namespace Tests {
          btarrResponse = sender.ReceiveData();
          string strUserInfo = Encoding.ASCII.GetString(btarrResponse); //get user information
 
-         UserEntity user = XmlSerializer<UserEntity>.Deserialize(strUserInfo);
+         User user = XmlSerializer<User>.Deserialize(strUserInfo);
          //edit userinfo
          user.Login = "newlogin";
          user.Password = "newpasword";

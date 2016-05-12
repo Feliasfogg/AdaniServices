@@ -7,19 +7,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Runtime.Serialization;
+
 namespace CoreLib.Entity
 {
     using System;
     using System.Collections.Generic;
-    
+    [DataContract]
     public partial class User
     {
+        [DataMember]
         public int Id { get; set; }
+        [DataMember]
         public string Name { get; set; }
+        [DataMember]
         public string Login { get; set; }
+        [DataMember]
         public string Password { get; set; }
+        [DataMember]
         public long AccessLevel { get; set; }
-    
+        [DataMember]
         public virtual SessionKey SessionKey { get; set; }
     }
 }

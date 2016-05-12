@@ -7,17 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Runtime.Serialization;
+
 namespace CoreLib.Entity
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class SessionKey
-    {
+    [DataContract]
+    public partial class SessionKey {
+        [DataMember]
         public int Id { get; set; }
+        [DataMember]
         public string Key { get; set; }
+        [DataMember]
         public System.DateTime ExpirationTime { get; set; }
-    
+        [DataMember]
         public virtual User User { get; set; }
     }
 }

@@ -8,27 +8,34 @@ using CoreLib.Encryption;
 
 namespace CoreLib.Entity {
    public class EntityProvider : IDisposable {
-      private EntityDataModelContainer _Model = new EntityDataModelContainer();
+      private EntityDataModelContainer _Context = new EntityDataModelContainer();
+
+      public EntityProvider() {
+         _Context.Configuration.ProxyCreationEnabled = false;
+      }
 
       public DbSet<User> Users {
-         get { return _Model.Users; }
+         get { return _Context.Users; }
       }
 
       public User GetUserByCredentials(string login, string password) {
-         return _Model.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
+         return _Context.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
       }
 
       public User GetUserById(int id) {
-         return _Model.Users.FirstOrDefault(user => user.Id == id);
+         return _Context.Users.FirstOrDefault(user => user.Id == id);
       }
-      public bool AddUser (User user) {
-         var existUser = _Model.Users.FirstOrDefault(usr => usr.Login == user.Login);
-         if(existUser!=null) {
-            return false;
-         }
-         _Model.Users.Add(user);
+
+      public bool AddUser(User user) {
+         //незабыть потом снова включить проверку
+         //var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
+         //if(existUser != null) {
+         //   return false;
+         //}
+         _Context.Users.Add(user);
          return true;
       }
+
       public string CreateSessionKey(User user) {
          string sessionKey = Encrypter.GeneratePassword(32);
          if(user.SessionKey == null) {
@@ -45,35 +52,43 @@ namespace CoreLib.Entity {
       }
 
       public User GetUserByKey(string strSessionKey) {
-         SessionKey sessionKey = _Model.SessionKeys.FirstOrDefault(key => key.Key == strSessionKey);
+         SessionKey sessionKey = _Context.SessionKeys.FirstOrDefault(key => key.Key == strSessionKey);
          if(sessionKey == null) {
             return null;
          }
-         return _Model.Users.FirstOrDefault(user => user.SessionKey.Key == sessionKey.Key);
+         var user = _Context.Users.FirstOrDefault(usr => usr.SessionKey.Key == sessionKey.Key);
+         var proxy = new User() {
+            Id = user.Id,
+            AccessLevel = user.AccessLevel,
+            Login = user.Login,
+            Password = user.Password,
+            Name = user.Name
+         };
+         return proxy;
       }
 
       public bool DeleteUser(int userId) {
-         var user = _Model.Users.FirstOrDefault(usr => usr.Id == userId);
+         var user = _Context.Users.FirstOrDefault(usr => usr.Id == userId);
          if(user == null) {
             return false;
          }
 
-         var key = _Model.SessionKeys.FirstOrDefault(sessionKey => sessionKey.User.Id == user.Id);
-         if (key != null) {
-            _Model.SessionKeys.Remove(key);
+         var key = _Context.SessionKeys.FirstOrDefault(sessionKey => sessionKey.User.Id == user.Id);
+         if(key != null) {
+            _Context.SessionKeys.Remove(key);
          }
-         _Model.Users.Remove(user);
+         _Context.Users.Remove(user);
 
          return true;
       }
 
       public Device GetDeviceInfo(int deviceId) {
-         return _Model.Devices.FirstOrDefault(device => device.Id == deviceId);
+         return _Context.Devices.FirstOrDefault(device => device.Id == deviceId);
       }
 
       public void Dispose() {
-         _Model.SaveChanges();
-         _Model.Dispose();
+         _Context.SaveChanges();
+         _Context.Dispose();
       }
    }
 }

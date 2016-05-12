@@ -84,12 +84,10 @@
     <Compile Include="Entity\SessionKey.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entity\SessionKeyEntity.cs" />
     <Compile Include="Entity\DeviceEntity.cs" />
     <Compile Include="Entity\User.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="Helpers\BroadcastHelper.cs" />
     <Compile Include="Helpers\IListener.cs" />
     <Compile Include="Helpers\ISender.cs" />

@@ -88,15 +88,7 @@ namespace AuthorizationServer.Listeners {
                if(user == null) {
                   throw new Exception("No exist user");
                }
-               var userEntity = new UserEntity() {
-                  Id = user.Id,
-                  Login = user.Login,
-                  Name = user.Name,
-                  Password = user.Password,
-                  AccessLevel = user.AccessLevel
-               };
-
-               string xmlString = XmlSerializer<UserEntity>.SerializeToXmlString(userEntity);
+               string xmlString = XmlSerializer<User>.SerializeToXmlString(user);
 
                SendResponse(xmlString);
             }
@@ -145,13 +137,7 @@ namespace AuthorizationServer.Listeners {
          try {
             var command = XmlSerializer<UserCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
-               var user = new User() {
-                  Login = command.User.Login,
-                  Password = command.User.Password,
-                  AccessLevel = command.User.AccessLevel,
-                  Name = command.User.Name
-               };
-               bool result = provider.AddUser(user);
+               bool result = provider.AddUser(command.User);
                if(!result) {
                   throw new Exception("Cant add user");
                }

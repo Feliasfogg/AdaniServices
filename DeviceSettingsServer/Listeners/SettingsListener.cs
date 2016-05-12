@@ -48,7 +48,7 @@ namespace DeviceSettingsServer.Listeners {
          }
       }
 
-      private UserEntity GetUserInfo(string sessionKey) {
+      private User GetUserInfo(string sessionKey) {
          try {
             var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
             sender.GetTcpSettings();
@@ -65,7 +65,7 @@ namespace DeviceSettingsServer.Listeners {
             string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
 
             //десериализация xml в объект пользователя
-            var userInfo = XmlSerializer<UserEntity>.Deserialize(btarrResponse);
+            var userInfo = XmlSerializer<User>.Deserialize(btarrResponse);
             return userInfo;
          }
          catch {
@@ -77,7 +77,7 @@ namespace DeviceSettingsServer.Listeners {
          try {
             var command = XmlSerializer<DeviceSettingsCommand>.Deserialize(xml);
 
-            UserEntity user = GetUserInfo(command.SessionKey);
+            User user = GetUserInfo(command.SessionKey);
             if(user == null) {
                throw new Exception();
             }
