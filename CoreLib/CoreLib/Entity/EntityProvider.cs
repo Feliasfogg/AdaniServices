@@ -21,7 +21,14 @@ namespace CoreLib.Entity {
       public User GetUserById(int id) {
          return _Model.Users.FirstOrDefault(user => user.Id == id);
       }
-
+      public bool AddUser (User user) {
+         var existUser = _Model.Users.FirstOrDefault(usr => usr.Login == user.Login);
+         if(existUser!=null) {
+            return false;
+         }
+         _Model.Users.Add(user);
+         return true;
+      }
       public string CreateSessionKey(User user) {
          string sessionKey = Encrypter.GeneratePassword(32);
          if(user.SessionKey == null) {

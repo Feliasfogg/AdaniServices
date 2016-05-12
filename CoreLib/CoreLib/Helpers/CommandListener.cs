@@ -24,7 +24,8 @@ namespace CoreLib.Helpers {
    /// class provides easy methods for listen local udp port and recives tcp settings for client
    /// </summary>
    public abstract class CommandListener : IListener {
-      protected IPEndPoint _RemoteEndPoint;
+      protected IPEndPoint _RemoteUdpEp;
+      protected IPEndPoint _RemoteTcpEp;
       protected IPEndPoint _LocalTcpEp;
       protected int _ListenPort;
       protected TcpListener _TcpListener;
@@ -37,7 +38,7 @@ namespace CoreLib.Helpers {
       public CommandListener(int listenPort, IPEndPoint localTcpEp) {
          _ListenPort = listenPort;
          _LocalTcpEp = localTcpEp;
-         _RemoteEndPoint = new IPEndPoint(IPAddress.Any, 1111);
+         _RemoteUdpEp = new IPEndPoint(IPAddress.Any, 1111);
          _TcpListener = new TcpListener(localTcpEp);
          _TcpListener.Start();
       }
@@ -51,8 +52,11 @@ namespace CoreLib.Helpers {
       }
 
       public void ListenTcp() {
+         //мы слушаем TcpListner входящие tcp соединения, на стороне клиента тоже есть
+         //tcplistner, который принимает входящие соединения от сервера
          while(true) {
             TcpClient client = _TcpListener.AcceptTcpClient();
+            _RemoteTcpEp = (IPEndPoint)client.Client.RemoteEndPoint;
 
             List<byte> data = new List<byte>();
             byte[] buffer = new byte[1];
@@ -73,10 +77,11 @@ namespace CoreLib.Helpers {
       }
 
       public void ListenUdp() {
+         //мы слушаем TcpListner входящие tcp соединения
          UdpClient client;
          while(true) {
             client = new UdpClient(_ListenPort);
-            byte[] data = client.Receive(ref _RemoteEndPoint);
+            byte[] data = client.Receive(ref _RemoteUdpEp);
             client.Close();
             Task.Run(() => Parse(data));
          }
@@ -89,7 +94,7 @@ namespace CoreLib.Helpers {
          byte[] btarr = Encoding.ASCII.GetBytes(strAddress);
 
          var client = new UdpClient();
-         client.Connect(_RemoteEndPoint);
+         client.Connect(_RemoteUdpEp);
          client.Send(btarr, btarr.Length);
       }
 
@@ -100,10 +105,13 @@ namespace CoreLib.Helpers {
          encryptedString += publicKey;
 
          byte[] bytes = Encoding.ASCII.GetBytes(encryptedString);
-         TcpClient client = _TcpListener.AcceptTcpClient();
+
+         TcpClient client = new TcpClient();
+         client.Connect(_RemoteTcpEp);
          using(NetworkStream networkStream = client.GetStream()) {
             networkStream.Write(bytes, 0, bytes.Length);
          }
+         client.Close();
       }
 
       protected void SendResponse(byte[] bytes) {

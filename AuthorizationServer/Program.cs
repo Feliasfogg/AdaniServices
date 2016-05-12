@@ -21,6 +21,7 @@ namespace AuthorizationServer {
          var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000);
          var setter = new AuthorizationListener(4444, localEp);
          setter.ListenUdpAsync();
+         setter.ListenTcpAsync();
          Console.ReadLine();
       }
    }

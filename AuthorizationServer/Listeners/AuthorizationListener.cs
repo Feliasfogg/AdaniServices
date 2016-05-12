@@ -71,12 +71,12 @@ namespace AuthorizationServer.Listeners {
                   SendResponse(sessionKey);
                }
                else {
-                  throw new Exception();
+                  throw new Exception("No exist user");
                }
             }
          }
          catch(Exception ex) {
-            SendResponse("error");
+            SendResponse(ex.Message);
          }
       }
 
@@ -86,7 +86,7 @@ namespace AuthorizationServer.Listeners {
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
-                  throw new Exception();
+                  throw new Exception("No exist user");
                }
                var userEntity = new UserEntity() {
                   Id = user.Id,
@@ -102,7 +102,7 @@ namespace AuthorizationServer.Listeners {
             }
          }
          catch(Exception ex) {
-            SendResponse("error");
+            SendResponse(ex.Message);
          }
       }
 
@@ -112,7 +112,7 @@ namespace AuthorizationServer.Listeners {
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserById(command.User.Id);
                if(user == null) {
-                  throw new Exception();
+                  throw new Exception("No exist user");
                }
                user.Login = command.User.Login;
                user.Password = command.User.Password;
@@ -122,7 +122,7 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse("error");
+            SendResponse(ex.Message);
          }
       }
 
@@ -131,16 +131,13 @@ namespace AuthorizationServer.Listeners {
             var command = XmlSerializer<DeleteUserCommand>.Deserialize(xml);
             using(var provider = new EntityProvider()) {
                bool result = provider.DeleteUser(command.UserId);
-               if(result) {
-                  SendResponse("ok");
-               }
-               else {
-                  SendResponse("error");
+               if(!result) {
+                  throw new Exception("Cant delete user");
                }
             }
-         }
-         catch(Exception ex) {
-            SendResponse("error");
+            SendResponse("ok");
+         } catch (Exception ex) {
+            SendResponse(ex.Message);
          }
       }
 
@@ -154,12 +151,15 @@ namespace AuthorizationServer.Listeners {
                   AccessLevel = command.User.AccessLevel,
                   Name = command.User.Name
                };
-               provider.Users.Add(user);
+               bool result = provider.AddUser(user);
+               if(!result) {
+                  throw new Exception("Cant add user");
+               }
             }
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse("error");
+            SendResponse(ex.Message);
          }
       }
    }

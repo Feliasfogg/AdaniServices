@@ -16,10 +16,10 @@ using Microsoft.SqlServer.Server;
 namespace CoreLib.Helpers {
    public class CommandSender : ISender {
       private UdpClient _UdpClient;
-
       private IPEndPoint _BroadCastAddress;
       private IPEndPoint _RemoteUdpEndPoint;
       private IPEndPoint _RemoteTcpEndPoint;
+      private IPEndPoint _LocalTcpEp;
 
       /// <summary>
       /// 
@@ -33,7 +33,7 @@ namespace CoreLib.Helpers {
          _RemoteUdpEndPoint = new IPEndPoint(broadcastAddress, targetPort);
       }
 
-      public void SendUdpCommand(string command) {
+      public void SendBroadcastCommand(string command) {
          command = CreateEncryptedCommand(command);
          byte[] bytes = Encoding.ASCII.GetBytes(command);
          _UdpClient.Send(bytes, bytes.Length, _BroadCastAddress);
@@ -42,24 +42,22 @@ namespace CoreLib.Helpers {
       public void SendTcpCommand(string command) {
          var tcpClient = new TcpClient();
          tcpClient.Connect(_RemoteTcpEndPoint);
+
+         _LocalTcpEp = (IPEndPoint)tcpClient.Client.LocalEndPoint;
+
          command = CreateEncryptedCommand(command);
          byte[] bytes = Encoding.ASCII.GetBytes(command);
          using(NetworkStream stream = tcpClient.GetStream()) {
             stream.Write(bytes, 0, bytes.Length);
          }
-      }
-
-      private string CreateEncryptedCommand(string strCommand) {
-         string publicKey = Encrypter.GeneratePassword(8);
-         string hash = Encrypter.GeneratePasswordHash(publicKey);
-         string encryptCommand = Encrypter.Encrypt(strCommand, hash);
-         encryptCommand += publicKey;
-         return encryptCommand;
+         tcpClient.Close();
       }
 
       public byte[] ReceiveData() {
-         var tcpClient = new TcpClient();
-         tcpClient.Connect(_RemoteTcpEndPoint);
+         var tcpListner = new TcpListener(_LocalTcpEp);
+         tcpListner.Start();
+         var tcpClient = tcpListner.AcceptTcpClient();
+
          List<byte> data = new List<byte>();
          byte[] buffer = new byte[1];
          using(NetworkStream stream = tcpClient.GetStream()) {
@@ -73,15 +71,10 @@ namespace CoreLib.Helpers {
             }
          }
          tcpClient.Close();
+         tcpListner.Stop();
 
          //расшифровка данных
-         string encryptedString = Encoding.ASCII.GetString(data.ToArray());
-         string publicKey = encryptedString.Substring(encryptedString.Length - 8);
-         encryptedString = encryptedString.Substring(0, encryptedString.Length - 8);
-         string hash = Encrypter.GeneratePasswordHash(publicKey);
-         string decryptString = Encrypter.Decrypt(encryptedString, hash);
-
-         return Encoding.ASCII.GetBytes(decryptString);
+         return DecryptData(data.ToArray());
       }
 
 
@@ -94,6 +87,22 @@ namespace CoreLib.Helpers {
          string[] ipAdress = strResponse.Split(':');
 
          _RemoteTcpEndPoint = new IPEndPoint(IPAddress.Parse(ipAdress[0]), Convert.ToInt32(ipAdress[1]));
+      }
+
+      private string CreateEncryptedCommand(string strCommand) {
+         string publicKey = Encrypter.GeneratePassword(8);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string encryptCommand = Encrypter.Encrypt(strCommand, hash);
+         encryptCommand += publicKey;
+         return encryptCommand;
+      }
+      private byte[] DecryptData(byte[] data) {
+         string encryptedString = Encoding.ASCII.GetString(data);
+         string publicKey = encryptedString.Substring(encryptedString.Length - 8);
+         encryptedString = encryptedString.Substring(0, encryptedString.Length - 8);
+         string hash = Encrypter.GeneratePasswordHash(publicKey);
+         string decryptString = Encrypter.Decrypt(encryptedString, hash);
+         return Encoding.ASCII.GetBytes(decryptString);
       }
    }
 }

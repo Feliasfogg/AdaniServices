@@ -60,7 +60,7 @@ namespace DeviceSettingsServer.Listeners {
 
             string strAuthInfoCommand = XmlSerializer<ServiceCommand>.SerializeToXmlString(authInfoCommand);
 
-            sender.SendUdpCommand(strAuthInfoCommand);
+            sender.SendBroadcastCommand(strAuthInfoCommand);
             byte[] btarrResponse = sender.ReceiveData();
             string strAuthInfoResult = Encoding.ASCII.GetString(btarrResponse);
 
@@ -68,7 +68,7 @@ namespace DeviceSettingsServer.Listeners {
             var userInfo = XmlSerializer<UserEntity>.Deserialize(btarrResponse);
             return userInfo;
          }
-         catch(Exception ex) {
+         catch {
             return null;
          }
       }
@@ -85,7 +85,7 @@ namespace DeviceSettingsServer.Listeners {
             using(var provider = new EntityProvider()) {
                Device device = provider.GetDeviceInfo(command.DeviceId);
                if(device == null) {
-                  throw new Exception();
+                  throw new Exception("Cant get device information");
                }
                deviceEntity = new DeviceEntity() {
                   Id = device.Id,
@@ -108,7 +108,7 @@ namespace DeviceSettingsServer.Listeners {
             }
          }
          catch(Exception ex) {
-            SendResponse("error");
+            SendResponse(ex.Message);
          }
       }
    }

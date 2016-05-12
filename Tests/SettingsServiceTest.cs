@@ -36,7 +36,7 @@ namespace Tests {
 
          string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
 
-         authSender.SendUdpCommand(authCommandXml);
+         authSender.SendTcpCommand(authCommandXml);
          byte[] btarrResponse = authSender.ReceiveData();
          string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
          Assert.IsTrue(strSessionKey != String.Empty && strSessionKey != "error");
@@ -52,7 +52,7 @@ namespace Tests {
 
          string deviceSettingsCommandXml = XmlSerializer<DeviceSettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendUdpCommand(deviceSettingsCommandXml);
+         settingsCommandSender.SendTcpCommand(deviceSettingsCommandXml);
          btarrResponse = settingsCommandSender.ReceiveData();
          Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) != "error");
          DeviceEntity device = XmlSerializer<DeviceEntity>.Deserialize(btarrResponse);
