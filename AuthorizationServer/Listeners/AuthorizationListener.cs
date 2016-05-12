@@ -64,16 +64,17 @@ namespace AuthorizationServer.Listeners {
       private void Authorize(string xml) {
          try {
             var command = XmlSerializer<AuthorizationCommand>.Deserialize(xml);
+            string sessionKey;
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByCredentials(command.Login, command.Password);
                if(user != null) {
-                  string sessionKey = provider.CreateSessionKey(user);
-                  SendResponse(sessionKey);
+                  sessionKey = provider.CreateSessionKey(user);
                }
                else {
                   throw new Exception("No exist user");
                }
             }
+            SendResponse(sessionKey);
          }
          catch(Exception ex) {
             SendResponse(ex.Message);
@@ -83,17 +84,17 @@ namespace AuthorizationServer.Listeners {
       private void GetUserInfo(string xml) {
          try {
             var command = XmlSerializer<ServiceCommand>.Deserialize(xml);
-            using(var provider = new EntityProvider()) {
+            string xmlString;
+            using (var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
                   throw new Exception("No exist user");
                }
-               string xmlString = XmlSerializer<User>.SerializeToXmlString(user);
+               xmlString = XmlSerializer<User>.SerializeToXmlString(user);
 
-               SendResponse(xmlString);
             }
-         }
-         catch(Exception ex) {
+            SendResponse(xmlString);
+         } catch (Exception ex) {
             SendResponse(ex.Message);
          }
       }
@@ -128,7 +129,8 @@ namespace AuthorizationServer.Listeners {
                }
             }
             SendResponse("ok");
-         } catch (Exception ex) {
+         }
+         catch(Exception ex) {
             SendResponse(ex.Message);
          }
       }

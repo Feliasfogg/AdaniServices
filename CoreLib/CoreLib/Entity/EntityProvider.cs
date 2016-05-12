@@ -38,7 +38,8 @@ namespace CoreLib.Entity {
 
       public string CreateSessionKey(User user) {
          string sessionKey = Encrypter.GeneratePassword(32);
-         if(user.SessionKey == null) {
+         SessionKey key = GetSessionKey(user);
+         if(key == null) {
             user.SessionKey = new SessionKey() {
                Key = sessionKey,
                ExpirationTime = DateTime.Now.AddHours(2)
@@ -57,6 +58,8 @@ namespace CoreLib.Entity {
             return null;
          }
          var user = _Context.Users.FirstOrDefault(usr => usr.SessionKey.Key == sessionKey.Key);
+         //здесь я делаю объект user без поля SessionKey т.к там идут циклические ссылки User->SessionKey->User...
+         //а xml сериализатор не поддерживает такую сериализацию. Потому оставляем только те поля, котоыре необходимы для работы
          var proxy = new User() {
             Id = user.Id,
             AccessLevel = user.AccessLevel,
@@ -80,6 +83,10 @@ namespace CoreLib.Entity {
          _Context.Users.Remove(user);
 
          return true;
+      }
+
+      public SessionKey GetSessionKey(User user) {
+         return _Context.SessionKeys.FirstOrDefault(key => key.User.Id == user.Id);
       }
 
       public Device GetDeviceInfo(int deviceId) {
