@@ -212,7 +212,7 @@ namespace Tests {
 
          //удаление пользователя
          var deleteCommand = new DeleteUserCommand() {
-            Command = CommandActions.DeleteUser,
+            Command = CommandActions.RemoveUser,
             UserId = user.Id
          };
 

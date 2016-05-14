@@ -19,7 +19,7 @@ namespace CoreLib.Commands.Common {
       EditUser,
 
       [EnumMember]
-      DeleteUser,
+      RemoveUser,
 
       [EnumMember]
       GetUser,
@@ -31,6 +31,9 @@ namespace CoreLib.Commands.Common {
       AddDevice,
 
       [EnumMember]
-      EditDevice
+      EditDevice,
+
+      [EnumMember]
+      RemoveDevice
    }
 }

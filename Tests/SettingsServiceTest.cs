@@ -69,8 +69,8 @@ namespace Tests {
          string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
          settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] btarrResponse = settingsCommandSender.ReceiveData();
-         Device device = XmlSerializer<Device>.Deserialize(btarrResponse);
+         byte[] bytes = settingsCommandSender.ReceiveData();
+         Device device = XmlSerializer<Device>.Deserialize(bytes);
       }
 
       [TestMethod]
@@ -105,8 +105,8 @@ namespace Tests {
          string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
          settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] btarrResponse = settingsCommandSender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) == "ok");
+         byte[] bytes = settingsCommandSender.ReceiveData();
+         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
       }
 
       [TestMethod]
@@ -119,14 +119,14 @@ namespace Tests {
          var deviceSettingsCommand = new SettingsCommand() {
             Command = CommandActions.GetDevice,
             SessionKey = strSessionKey,
-            DeviceId = 2
+            DeviceId = 2 ////в базе должен лежать девайс с таким id
          };
 
          string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
          settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] btarrResponse = settingsCommandSender.ReceiveData();
-         Device device = XmlSerializer<Device>.Deserialize(btarrResponse);
+         byte[] bytes = settingsCommandSender.ReceiveData();
+         Device device = XmlSerializer<Device>.Deserialize(bytes);
 
          device.ConnectionType = "USB";
 
@@ -138,8 +138,57 @@ namespace Tests {
 
          xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
          settingsCommandSender.SendTcpCommand(xmlCommand);
-         btarrResponse = settingsCommandSender.ReceiveData();
-         string result = Encoding.ASCII.GetString(btarrResponse);
+         bytes = settingsCommandSender.ReceiveData();
+         string result = Encoding.ASCII.GetString(bytes);
+         Assert.IsTrue(result == "ok");
+      }
+
+      [TestMethod]
+      public void CreateRemoveDevice() {
+         string strSessionKey = AuthorizeUser();
+
+         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+         settingsCommandSender.GetTcpSettings();
+         //создаем настройки оборудования
+         var newDevice = new Device() {
+            DeviceGroupId = 1,
+            ConnectionType = "COM",
+            GeneratorType = 2,
+            NormalVoltage = 200,
+            HighVoltage = 200,
+            NormalCurrent = 175,
+            HighCurrent = 200,
+            HighMode = 0,
+            ReseasonDate = 422.111,
+            WorkTime = 1.365,
+            XRayTime = 0.512,
+            LastWorkedDate = 422.111,
+            Name = "H-projection"
+         };
+
+         var deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.AddDevice,
+            Device = newDevice,
+            SessionKey = strSessionKey,
+         };
+
+         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         byte[] bytes = settingsCommandSender.ReceiveData();
+         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+
+         deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.RemoveDevice,
+            DeviceId = 2, //в базе должен лежать девайс с таким id
+            SessionKey = strSessionKey
+         };
+
+         xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         bytes = settingsCommandSender.ReceiveData();
+         string result = Encoding.ASCII.GetString(bytes);
          Assert.IsTrue(result == "ok");
       }
    }

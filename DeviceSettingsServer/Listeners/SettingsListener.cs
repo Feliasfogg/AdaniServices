@@ -49,6 +49,9 @@ namespace DeviceSettingsServer.Listeners {
             case "EditDevice":
                EditDevice(decryptXml);
                break;
+            case "RemoveDevice":
+               RemoveDevice(decryptXml);
+               break;
             default:
                break;
             }
@@ -87,7 +90,6 @@ namespace DeviceSettingsServer.Listeners {
             if(user == null) {
                throw new Exception("Cant get user info");
             }
-            Device deviceEntity;
             string xmlDeviceInfo;
             using(var provider = new EntityProvider()) {
                Device device = provider.GetDeviceInfo(command.DeviceId);
@@ -158,11 +160,39 @@ namespace DeviceSettingsServer.Listeners {
                   device.ReseasonDate = command.Device.ReseasonDate;
                   device.XRayTime = command.Device.XRayTime;
                }
-               SendResponse("ok");
             }
             else {
                throw new Exception($"User with ID={user.Id} cant edit device settings");
             }
+            SendResponse("ok");
+         }
+         catch(Exception ex) {
+            SendResponse($"{ex.Message} in {nameof(AddDevice)}");
+         }
+      }
+
+      private void RemoveDevice(string xmlCommand) {
+         try {
+            var command = XmlSerializer<SettingsCommand>.Deserialize(xmlCommand);
+
+            User user = GetUserInfo(command.SessionKey);
+            if(user == null) {
+               throw new Exception("Cant get user info in");
+            }
+            byte[] accessLevel = BitConverter.GetBytes(user.AccessLevel);
+
+            if(accessLevel[7] >= 200) {
+               using(var provider = new EntityProvider()) {
+                  bool result = provider.RemoveDevice(command.DeviceId);
+                  if(!result) {
+                     throw new Exception($"cant delete device with ID {command.DeviceId}");
+                  }
+               }
+            }
+            else {
+               throw new Exception($"User with ID={user.Id} cant edit device settings");
+            }
+            SendResponse("ok");
          }
          catch(Exception ex) {
             SendResponse($"{ex.Message} in {nameof(AddDevice)}");

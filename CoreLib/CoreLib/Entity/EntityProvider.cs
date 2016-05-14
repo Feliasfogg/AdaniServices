@@ -51,7 +51,7 @@ namespace CoreLib.Entity {
          }
          return sessionKey;
       }
-
+      
       public User GetUserByKey(string strSessionKey) {
          SessionKey sessionKey = _Context.SessionKeys.FirstOrDefault(key => key.Key == strSessionKey);
          if(sessionKey == null) {
@@ -70,8 +70,8 @@ namespace CoreLib.Entity {
          return proxy;
       }
 
-      public bool DeleteUser(int userId) {
-         var user = _Context.Users.FirstOrDefault(usr => usr.Id == userId);
+      public bool RemoveUser(int id) {
+         var user = _Context.Users.FirstOrDefault(usr => usr.Id == id);
          if(user == null) {
             return false;
          }
@@ -82,6 +82,15 @@ namespace CoreLib.Entity {
          }
          _Context.Users.Remove(user);
 
+         return true;
+      }
+
+      public bool RemoveDevice(int id) {
+         var device = _Context.Devices.FirstOrDefault(dvc => dvc.Id == id);
+         if (device == null) {
+            return false;
+         }
+         _Context.Devices.Remove(device);
          return true;
       }
 

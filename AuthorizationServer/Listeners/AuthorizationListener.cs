@@ -48,8 +48,8 @@ namespace AuthorizationServer.Listeners {
             case "EditUser":
                EditUser(decryptXml);
                break;
-            case "DeleteUser":
-               DeleteUser(decryptXml);
+            case "RemoveUser":
+               RemoveUser(decryptXml);
                break;
             case "AddUser":
                AddUser(decryptXml);
@@ -119,11 +119,11 @@ namespace AuthorizationServer.Listeners {
          }
       }
 
-      private void DeleteUser(string xmlCommand) {
+      private void RemoveUser(string xmlCommand) {
          try {
             var command = XmlSerializer<DeleteUserCommand>.Deserialize(xmlCommand);
             using(var provider = new EntityProvider()) {
-               bool result = provider.DeleteUser(command.UserId);
+               bool result = provider.RemoveUser(command.UserId);
                if(!result) {
                   throw new Exception("Cant delete user");
                }
@@ -131,7 +131,7 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse($"{ex.Message} in {nameof(DeleteUser)}");
+            SendResponse($"{ex.Message} in {nameof(RemoveUser)}");
          }
       }
 
