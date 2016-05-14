@@ -23,37 +23,124 @@ namespace Tests {
          sender.GetTcpSettings();
       }
 
-      [TestMethod]
-      public void GetDeviceInfoTest() {
-         var authSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
-         authSender.GetTcpSettings();
-
-         var authCommand = new AuthorizationCommand() {
+      public string AuthorizeUser() {
+         var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
+         Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         sender.GetTcpSettings();
+         var newUser = new User() {
+            Login = "felias",
+            Password = "fenris",
+            Name = "pavel",
+            AccessLevel = accessLevel,
+         };
+         var addUserCommand = new UserCommand() {
+            Command = CommandActions.AddUser,
+            User = newUser
+         };
+         string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
+         sender.SendTcpCommand(addUserCommandXml);
+         byte[] bytes = sender.ReceiveData();
+         var authCommand = new UserCommand() {
             Command = CommandActions.Authorization,
             Login = "felias",
             Password = "fenris"
          };
+         string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
+         sender.SendTcpCommand(authCommandXml);
+         bytes = sender.ReceiveData();
+         string strSessionKey = Encoding.ASCII.GetString(bytes);
+         return strSessionKey;
+      }
 
-         string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
-         authSender.SendTcpCommand(authCommandXml);
-         byte[] btarrResponse = authSender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
+      [TestMethod]
+      public void GetDeviceInfoTest() {
+         string strSessionKey = AuthorizeUser();
 
          var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
 
-         var deviceSettingsCommand = new DeviceSettingsCommand() {
-            Command = CommandActions.GetDeviceSettings,
+         var deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.GetDevice,
             SessionKey = strSessionKey,
             DeviceId = 2
          };
 
-         string deviceSettingsCommandXml = XmlSerializer<DeviceSettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendTcpCommand(deviceSettingsCommandXml);
-         btarrResponse = settingsCommandSender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) != "error");
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         byte[] btarrResponse = settingsCommandSender.ReceiveData();
          Device device = XmlSerializer<Device>.Deserialize(btarrResponse);
+      }
+
+      [TestMethod]
+      public void AddDeviceTest() {
+         string strSessionKey = AuthorizeUser();
+
+         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+         settingsCommandSender.GetTcpSettings();
+
+         var newDevice = new Device() {
+            DeviceGroupId = 1,
+            ConnectionType = "COM",
+            GeneratorType = 2,
+            NormalVoltage = 200,
+            HighVoltage = 200,
+            NormalCurrent = 175,
+            HighCurrent = 200,
+            HighMode = 0,
+            ReseasonDate = 422.111,
+            WorkTime = 1.365,
+            XRayTime = 0.512,
+            LastWorkedDate = 422.111,
+            Name = "H-projection"
+         };
+
+         var deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.AddDevice,
+            Device = newDevice,
+            SessionKey = strSessionKey,
+         };
+
+         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         byte[] btarrResponse = settingsCommandSender.ReceiveData();
+         Assert.IsTrue(Encoding.ASCII.GetString(btarrResponse) == "ok");
+      }
+
+      [TestMethod]
+      public void EditDeviceTest() {
+         string strSessionKey = AuthorizeUser();
+
+         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+         settingsCommandSender.GetTcpSettings();
+
+         var deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.GetDevice,
+            SessionKey = strSessionKey,
+            DeviceId = 2
+         };
+
+         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         byte[] btarrResponse = settingsCommandSender.ReceiveData();
+         Device device = XmlSerializer<Device>.Deserialize(btarrResponse);
+
+         device.ConnectionType = "USB";
+
+         deviceSettingsCommand = new SettingsCommand() {
+            Command = CommandActions.EditDevice,
+            SessionKey = strSessionKey,
+            Device = device
+         };
+
+         xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+         settingsCommandSender.SendTcpCommand(xmlCommand);
+         btarrResponse = settingsCommandSender.ReceiveData();
+         string result = Encoding.ASCII.GetString(btarrResponse);
+         Assert.IsTrue(result == "ok");
       }
    }
 }

@@ -92,6 +92,9 @@ namespace CoreLib.Entity {
       public Device GetDeviceInfo(int deviceId) {
          return _Context.Devices.FirstOrDefault(device => device.Id == deviceId);
       }
+      public void AddDevice(Device device) {
+         _Context.Devices.Add(device);
+      }
 
       public void Dispose() {
          _Context.SaveChanges();

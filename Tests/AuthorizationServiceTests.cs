@@ -18,6 +18,37 @@ using CoreLib.Entity;
 namespace Tests {
    [TestClass]
    public class AuthrorizationServiceTests {
+      public string AuthorizeUser() {
+         //здесь кусок кода из теста AuthorizationTest, вынес сюда для сокращения объемов других тестов
+         var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
+         Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         sender.GetTcpSettings();
+         var newUser = new User() {
+            Login = "felias",
+            Password = "fenris",
+            Name = "pavel",
+            AccessLevel = accessLevel,
+         };
+         var addUserCommand = new UserCommand() {
+            Command = CommandActions.AddUser,
+            User = newUser
+         };
+         string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
+         sender.SendTcpCommand(addUserCommandXml);
+         byte[] bytes = sender.ReceiveData();
+         var authCommand = new UserCommand() {
+            Command = CommandActions.Authorization,
+            Login = "felias",
+            Password = "fenris"
+         };
+         string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
+         sender.SendTcpCommand(authCommandXml);
+         bytes = sender.ReceiveData();
+         string strSessionKey = Encoding.ASCII.GetString(bytes);
+         return strSessionKey;
+      }
+
       [TestMethod]
       public void SerializeDeserializeTest() {
          var testInstance = new TestClass() {
@@ -37,72 +68,6 @@ namespace Tests {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
       }
-
-      [TestMethod]
-      public void AddDeleteUserTest() {
-         var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
-         Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
-         sender.GetTcpSettings();
-         //создание юзера
-         var newUser = new User() {
-            Login = "felias",
-            Password = "fenris",
-            Name = "pavel",
-            AccessLevel = accessLevel,
-         };
-         //команда создания юзера
-         var addUserCommand = new UserCommand() {
-            Command = CommandActions.AddUser,
-            User = newUser
-         };
-         //сериализация
-         string addCommand= XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
-         //отрпавка команды
-         sender.SendTcpCommand(addCommand);
-         byte[] bytes = sender.ReceiveData(); //получение ответа //БАГ - пытаемься получить данные еще до того как они будут отправлены сервером
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
-
-         //команда авторизации
-         var authCommand = new AuthorizationCommand() {
-            Command = CommandActions.Authorization,
-            Login = "felias",
-            Password = "fenris"
-         };
-
-         string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
-         sender.SendTcpCommand(authCommandXml);
-         //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
-         bytes = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(bytes);
-
-         //команда получения инфы о пользователе
-         var userInfoCommand = new ServiceCommand() {
-            Command = CommandActions.GetUserInfo,
-            SessionKey = strSessionKey,
-         };
-
-         string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);
-
-         sender.SendTcpCommand(userInfoCommandXml);
-         bytes = sender.ReceiveData();
-         string strUserInfo = Encoding.ASCII.GetString(bytes); //инфа о пользователе
-         Assert.IsTrue(strUserInfo != "error" && strUserInfo != String.Empty);
-         User user = XmlSerializer<User>.Deserialize(strUserInfo); //десериализация строки инфы о пользователе в объект
-
-         //удаление пользователя
-         var deleteCommand = new DeleteUserCommand() {
-            Command = CommandActions.DeleteUser,
-            UserId = user.Id
-         };
-
-         string deleteCommandXml = XmlSerializer<DeleteUserCommand>.SerializeToXmlString(deleteCommand);
-         sender.SendTcpCommand(deleteCommandXml);
-         bytes = sender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
-      }
-
 
       [TestMethod]
       public void AuthorizationTest() {
@@ -127,17 +92,17 @@ namespace Tests {
          string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
          //отрпавка команды
          sender.SendTcpCommand(addUserCommandXml);
-         byte[] bytes = sender.ReceiveData(); //получение ответа //БАГ - пытаемься получить данные еще до того как они будут отправлены сервером
+         byte[] bytes = sender.ReceiveData(); //получение ответа
          Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
 
          //команда авторизации
-         var authCommand = new AuthorizationCommand() {
+         var authCommand = new UserCommand() {
             Command = CommandActions.Authorization,
             Login = "felias",
             Password = "fenris"
          };
 
-         string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
+         string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          sender.SendTcpCommand(authCommandXml);
          //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
          bytes = sender.ReceiveData();
@@ -148,44 +113,34 @@ namespace Tests {
       public void GetAuthInfoTest() {
          var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
          Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
-         //создание юзера
          var newUser = new User() {
             Login = "felias",
             Password = "fenris",
             Name = "pavel",
             AccessLevel = accessLevel,
          };
-         //команда создания юзера
          var addUserCommand = new UserCommand() {
             Command = CommandActions.AddUser,
             User = newUser
          };
-         //сериализация
          string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
-         //отрпавка команды
          sender.SendTcpCommand(addUserCommandXml);
-         byte[] bytes = sender.ReceiveData(); //получение ответа //БАГ - пытаемься получить данные еще до того как они будут отправлены сервером
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
-
-         //команда авторизации
-         var authCommand = new AuthorizationCommand() {
+         byte[] bytes = sender.ReceiveData();
+         var authCommand = new UserCommand() {
             Command = CommandActions.Authorization,
             Login = "felias",
             Password = "fenris"
          };
-
-         string authCommandXml = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(authCommand);
+         string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          sender.SendTcpCommand(authCommandXml);
-         //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
          bytes = sender.ReceiveData();
          string strSessionKey = Encoding.ASCII.GetString(bytes);
 
          //команда получения инфы о пользователе
          var userInfoCommand = new ServiceCommand() {
-            Command = CommandActions.GetUserInfo,
+            Command = CommandActions.GetUser,
             SessionKey = strSessionKey,
          };
 
@@ -201,56 +156,24 @@ namespace Tests {
 
       [TestMethod]
       public void EditUserTest() {
-         var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
-         Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-
+         string strSessionKey = AuthorizeUser();
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
          sender.GetTcpSettings();
-         //создание юзера
-         var newUser = new User() {
-            Login = "felias",
-            Password = "fenris",
-            Name = "pavel",
-            AccessLevel = accessLevel,
-         };
-         //команда создания юзера
-         var addUserCommand = new UserCommand() {
-            Command = CommandActions.AddUser,
-            User = newUser
-         };
-         //сериализация
-         string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
-         //отрпавка команды
-         sender.SendTcpCommand(addUserCommandXml);
-         byte[] bytes = sender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
-
-         var command = new AuthorizationCommand() {
-            Command = CommandActions.Authorization,
-            Login = "felias",
-            Password = "fenris"
-         };
-
-         string commandString = XmlSerializer<AuthorizationCommand>.SerializeToXmlString(command);
-         sender.SendTcpCommand(commandString);
-
-         byte[] btarrResponse = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(btarrResponse);
 
          //команда получения инфы об авторизации
          var userInfoCommand = new ServiceCommand() {
-            Command = CommandActions.GetUserInfo,
-            SessionKey = strSessionKey,
+            Command = CommandActions.GetUser,
+            SessionKey = strSessionKey
          };
 
          string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);
 
          sender.SendTcpCommand(userInfoCommandXml);
-         btarrResponse = sender.ReceiveData();
+         byte[] btarrResponse = sender.ReceiveData();
          string strUserInfo = Encoding.ASCII.GetString(btarrResponse); //get user information
 
          User user = XmlSerializer<User>.Deserialize(strUserInfo);
-         //edit userinfo
+         //изменяем инфу о пользоателе
          user.Login = "newlogin";
          user.Password = "newpasword";
 
@@ -265,6 +188,38 @@ namespace Tests {
          string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
          Assert.IsTrue(strResponse == "ok");
+      }
+
+      [TestMethod]
+      public void AddDeleteUserTest() {
+         string strSessionKey = AuthorizeUser();
+         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         sender.GetTcpSettings();
+
+         //команда получения инфы о пользователе
+         var userInfoCommand = new ServiceCommand() {
+            Command = CommandActions.GetUser,
+            SessionKey = strSessionKey,
+         };
+
+         string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);
+
+         sender.SendTcpCommand(userInfoCommandXml);
+         byte[] bytes = sender.ReceiveData();
+         string strUserInfo = Encoding.ASCII.GetString(bytes); //инфа о пользователе
+         Assert.IsTrue(strUserInfo != "error" && strUserInfo != String.Empty);
+         User user = XmlSerializer<User>.Deserialize(strUserInfo); //десериализация строки инфы о пользователе в объект
+
+         //удаление пользователя
+         var deleteCommand = new DeleteUserCommand() {
+            Command = CommandActions.DeleteUser,
+            UserId = user.Id
+         };
+
+         string deleteCommandXml = XmlSerializer<DeleteUserCommand>.SerializeToXmlString(deleteCommand);
+         sender.SendTcpCommand(deleteCommandXml);
+         bytes = sender.ReceiveData();
+         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
       }
    }
 }

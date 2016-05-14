@@ -22,9 +22,15 @@ namespace CoreLib.Commands.Common {
       DeleteUser,
 
       [EnumMember]
-      GetUserInfo,
+      GetUser,
 
       [EnumMember]
-      GetDeviceSettings
+      GetDevice,
+
+      [EnumMember]
+      AddDevice,
+
+      [EnumMember]
+      EditDevice
    }
 }

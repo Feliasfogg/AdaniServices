@@ -24,14 +24,14 @@ namespace AuthorizationServer.Listeners {
       protected override void Parse(byte[] data) {
          string strData = Encoding.ASCII.GetString(data);
          if(strData == "GET SETTINGS") {
-            base.SendTcpSettings();
+            SendTcpSettings();
          }
          else {
             //дешифровка
             string publicKey = strData.Substring(strData.Length - 8);
-            string hash = Encrypter.GeneratePasswordHash(publicKey);
+            string privateKey = Encrypter.GeneratePasswordHash(publicKey);
             strData = strData.Substring(0, strData.Length - 8);
-            string decryptXml = Encrypter.Decrypt(strData, hash);
+            string decryptXml = Encrypter.Decrypt(strData, privateKey);
             //парсинг результирующего xml
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);
@@ -42,11 +42,11 @@ namespace AuthorizationServer.Listeners {
             case "Authorization":
                Authorize(decryptXml);
                break;
-            case "GetUserInfo":
-               GetUserInfo(decryptXml);
+            case "GetUser":
+               GetUser(decryptXml);
                break;
             case "EditUser":
-               EditUserInfo(decryptXml);
+               EditUser(decryptXml);
                break;
             case "DeleteUser":
                DeleteUser(decryptXml);
@@ -61,9 +61,9 @@ namespace AuthorizationServer.Listeners {
       }
 
 
-      private void Authorize(string xml) {
+      private void Authorize(string xmlCommand) {
          try {
-            var command = XmlSerializer<AuthorizationCommand>.Deserialize(xml);
+            var command = XmlSerializer<UserCommand>.Deserialize(xmlCommand);
             string sessionKey;
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserByCredentials(command.Login, command.Password);
@@ -77,51 +77,51 @@ namespace AuthorizationServer.Listeners {
             SendResponse(sessionKey);
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse($"{ex.Message} in {nameof(Authorize)}");
          }
       }
 
-      private void GetUserInfo(string xml) {
+      private void GetUser(string xmlCommand) {
          try {
-            var command = XmlSerializer<ServiceCommand>.Deserialize(xml);
-            string xmlString;
+            var command = XmlSerializer<ServiceCommand>.Deserialize(xmlCommand);
+            string xmlUserInfo;
             using (var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
                   throw new Exception("No exist user");
                }
-               xmlString = XmlSerializer<User>.SerializeToXmlString(user);
-
+               xmlUserInfo = XmlSerializer<User>.SerializeToXmlString(user);
             }
-            SendResponse(xmlString);
+            SendResponse(xmlUserInfo);
          } catch (Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse($"{ex.Message} in {nameof(GetUser)}");
          }
       }
 
-      private void EditUserInfo(string xml) {
+      private void EditUser(string xmlCommand) {
          try {
-            var command = XmlSerializer<UserCommand>.Deserialize(xml);
+            var command = XmlSerializer<UserCommand>.Deserialize(xmlCommand);
             using(var provider = new EntityProvider()) {
                User user = provider.GetUserById(command.User.Id);
                if(user == null) {
                   throw new Exception("No exist user");
                }
+               //если сделать так user = command.User; то изменения в базу незапушутся
+               user.AccessLevel = command.User.AccessLevel;
                user.Login = command.User.Login;
                user.Password = command.User.Password;
-               user.AccessLevel = command.User.AccessLevel;
                user.Name = command.User.Name;
             }
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse($"{ex.Message} in {nameof(EditUser)}");
          }
       }
 
-      private void DeleteUser(string xml) {
+      private void DeleteUser(string xmlCommand) {
          try {
-            var command = XmlSerializer<DeleteUserCommand>.Deserialize(xml);
+            var command = XmlSerializer<DeleteUserCommand>.Deserialize(xmlCommand);
             using(var provider = new EntityProvider()) {
                bool result = provider.DeleteUser(command.UserId);
                if(!result) {
@@ -131,13 +131,13 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse($"{ex.Message} in {nameof(DeleteUser)}");
          }
       }
 
-      private void AddUser(string xml) {
+      private void AddUser(string xmlCommand) {
          try {
-            var command = XmlSerializer<UserCommand>.Deserialize(xml);
+            var command = XmlSerializer<UserCommand>.Deserialize(xmlCommand);
             using(var provider = new EntityProvider()) {
                bool result = provider.AddUser(command.User);
                if(!result) {
@@ -147,7 +147,7 @@ namespace AuthorizationServer.Listeners {
             SendResponse("ok");
          }
          catch(Exception ex) {
-            SendResponse(ex.Message);
+            SendResponse($"{ex.Message} in {nameof(AddUser)}");
          }
       }
    }
