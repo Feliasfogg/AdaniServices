@@ -9,11 +9,13 @@ using CoreLib.Commands.Common;
 using CoreLib.Entity;
 using Microsoft.SqlServer.Server;
 
-namespace CoreLib.Commands.Authorization {
+namespace CoreLib.Commands.User {
    [DataContract]
    public class UserCommand : ServiceCommand {
       [DataMember]
-      public User User { get; set; }
+      public Entity.User User { get; set; }
+      [DataMember]
+      public int UserId { get; set; }
 
       [DataMember]
       public string Login { get; set; }

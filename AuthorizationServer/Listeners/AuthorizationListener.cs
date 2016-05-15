@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using CoreLib;
 using CoreLib.Commands;
-using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
+using CoreLib.Commands.User;
 using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
@@ -121,7 +121,7 @@ namespace AuthorizationServer.Listeners {
 
       private void RemoveUser(string xmlCommand) {
          try {
-            var command = XmlSerializer<DeleteUserCommand>.Deserialize(xmlCommand);
+            var command = XmlSerializer<UserCommand>.Deserialize(xmlCommand);
             using(var provider = new EntityProvider()) {
                bool result = provider.RemoveUser(command.UserId);
                if(!result) {

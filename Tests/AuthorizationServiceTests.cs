@@ -11,8 +11,8 @@ using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ServiceModel.Channels;
 using System.Xml.Serialization;
-using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
+using CoreLib.Commands.User;
 using CoreLib.Entity;
 
 namespace Tests {
@@ -211,12 +211,12 @@ namespace Tests {
          User user = XmlSerializer<User>.Deserialize(strUserInfo); //десериализация строки инфы о пользователе в объект
 
          //удаление пользователя
-         var deleteCommand = new DeleteUserCommand() {
+         var deleteCommand = new UserCommand() {
             Command = CommandActions.RemoveUser,
             UserId = user.Id
          };
 
-         string deleteCommandXml = XmlSerializer<DeleteUserCommand>.SerializeToXmlString(deleteCommand);
+         string deleteCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(deleteCommand);
          sender.SendTcpCommand(deleteCommandXml);
          bytes = sender.ReceiveData();
          Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");

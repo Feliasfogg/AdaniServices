@@ -6,9 +6,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Commands;
-using CoreLib.Commands.Authorization;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
+using CoreLib.Commands.User;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Serialization;
@@ -119,7 +119,7 @@ namespace Tests {
          var deviceSettingsCommand = new SettingsCommand() {
             Command = CommandActions.GetDevice,
             SessionKey = strSessionKey,
-            DeviceId = 2 ////в базе должен лежать девайс с таким id
+            DeviceId = 2
          };
 
          string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
@@ -180,7 +180,7 @@ namespace Tests {
 
          deviceSettingsCommand = new SettingsCommand() {
             Command = CommandActions.RemoveDevice,
-            DeviceId = 2, //в базе должен лежать девайс с таким id
+            DeviceId = 2,
             SessionKey = strSessionKey
          };
 

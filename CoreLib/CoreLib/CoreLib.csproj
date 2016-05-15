@@ -52,8 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Authorization\UserCommand.cs" />
-    <Compile Include="Commands\Authorization\DeleteUserCommand.cs" />
+    <Compile Include="Commands\User\UserCommand.cs" />
     <Compile Include="Commands\Common\CommandActions.cs" />
     <Compile Include="Commands\Settings\SettingsCommand.cs" />
     <Compile Include="Commands\Common\ServiceCommand.cs" />
