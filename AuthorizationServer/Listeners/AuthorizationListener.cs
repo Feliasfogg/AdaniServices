@@ -14,6 +14,7 @@ using CoreLib.Commands.User;
 using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
+using CoreLib.Listeners;
 using CoreLib.Serialization;
 
 namespace AuthorizationServer.Listeners {
@@ -28,10 +29,7 @@ namespace AuthorizationServer.Listeners {
          }
          else {
             //дешифровка
-            string publicKey = strData.Substring(strData.Length - 8);
-            string privateKey = Encrypter.GeneratePasswordHash(publicKey);
-            strData = strData.Substring(0, strData.Length - 8);
-            string decryptXml = Encrypter.Decrypt(strData, privateKey);
+            string decryptXml = Encoding.ASCII.GetString(Encrypter.DecryptData(data));
             //парсинг результирующего xml
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);

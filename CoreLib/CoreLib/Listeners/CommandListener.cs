@@ -19,7 +19,7 @@ using CoreLib.Entity;
 using CoreLib.Serialization;
 
 
-namespace CoreLib.Helpers {
+namespace CoreLib.Listeners {
    /// <summary>
    /// class provides easy methods for listen local udp port and recives tcp settings for client
    /// </summary>
@@ -29,12 +29,11 @@ namespace CoreLib.Helpers {
       protected IPEndPoint _LocalTcpEp;
       protected int _ListenPort;
       protected TcpListener _TcpListener;
-
       /// <summary>
-      /// create instance of UdpHelper
+      /// Создает объект слушателя, который слушает Udp и Tcp протоколы
       /// </summary>
-      /// <param name="listenPort">local listen port</param>
-      /// <param name="localTcpEp">local service TCP endpoint</param>
+      /// <param name="listenPort">прослушиваемый порт</param>
+      /// <param name="localTcpEp">локальная оконечная точка для Tcp соединения</param>
       public CommandListener(int listenPort, IPEndPoint localTcpEp) {
          _ListenPort = listenPort;
          _LocalTcpEp = localTcpEp;
@@ -86,9 +85,9 @@ namespace CoreLib.Helpers {
             Task.Run(() => Parse(data));
          }
       }
-
+      //метод парсит получаемые данные, его имплементация расположена в наследниках
       protected abstract void Parse(byte[] data);
-
+      
       protected void SendTcpSettings() {
          var strAddress = _LocalTcpEp.ToString();
          byte[] btarr = Encoding.ASCII.GetBytes(strAddress);
@@ -97,26 +96,21 @@ namespace CoreLib.Helpers {
          client.Connect(_RemoteUdpEp);
          client.Send(btarr, btarr.Length);
       }
-
-      protected void SendResponse(string str) {
-         string publicKey = Encrypter.GeneratePassword(8);
-         string privateKey = Encrypter.GeneratePasswordHash(publicKey);
-         string encryptedString = Encrypter.Encrypt(str, privateKey);
-         encryptedString += publicKey;
-
-         byte[] bytes = Encoding.ASCII.GetBytes(encryptedString);
+      //метод для посылки ответа запросившему клиенту.
+      protected void SendResponse(byte[] data) {
+         //шифрование данных
+         byte[] encryptData = Encrypter.EncryptData(data);
 
          TcpClient client = new TcpClient();
          client.Connect(_RemoteTcpEp);
-         using(NetworkStream networkStream = client.GetStream()) {
-            networkStream.Write(bytes, 0, bytes.Length);
+         using (NetworkStream networkStream = client.GetStream()) {
+            networkStream.Write(encryptData, 0, encryptData.Length);
          }
          client.Close();
       }
 
-      protected void SendResponse(byte[] bytes) {
-         string data = Encoding.ASCII.GetString(bytes);
-         SendResponse(data);
+      protected void SendResponse(string str) {
+         SendResponse(Encoding.ASCII.GetBytes(str));
       }
    }
 }

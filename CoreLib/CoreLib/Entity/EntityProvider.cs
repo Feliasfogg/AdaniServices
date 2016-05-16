@@ -18,14 +18,6 @@ namespace CoreLib.Entity {
          get { return _Context.Users; }
       }
 
-      public User GetUserByCredentials(string login, string password) {
-         return _Context.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
-      }
-
-      public User GetUserById(int id) {
-         return _Context.Users.FirstOrDefault(user => user.Id == id);
-      }
-
       public bool AddUser(User user) {
          //TODO незабыть потом снова включить проверку
          //var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
@@ -36,22 +28,14 @@ namespace CoreLib.Entity {
          return true;
       }
 
-      public string CreateSessionKey(User user) {
-         string sessionKey = Encrypter.GeneratePassword(32);
-         SessionKey key = GetSessionKey(user);
-         if(key == null) {
-            user.SessionKey = new SessionKey() {
-               Key = sessionKey,
-               ExpirationTime = DateTime.Now.AddHours(2)
-            };
-         }
-         else {
-            user.SessionKey.Key = sessionKey;
-            user.SessionKey.ExpirationTime = DateTime.Now.AddHours(2);
-         }
-         return sessionKey;
+      public User GetUserByCredentials(string login, string password) {
+         return _Context.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
       }
-      
+
+      public User GetUserById(int id) {
+         return _Context.Users.FirstOrDefault(user => user.Id == id);
+      }
+
       public User GetUserByKey(string strSessionKey) {
          SessionKey sessionKey = _Context.SessionKeys.FirstOrDefault(key => key.Key == strSessionKey);
          if(sessionKey == null) {
@@ -85,6 +69,34 @@ namespace CoreLib.Entity {
          return true;
       }
 
+      public string CreateSessionKey(User user) {
+         string sessionKey = Encrypter.GeneratePassword(32);
+         SessionKey key = GetSessionKey(user);
+         if(key == null) {
+            user.SessionKey = new SessionKey() {
+               Key = sessionKey,
+               ExpirationTime = DateTime.Now.AddHours(2)
+            };
+         }
+         else {
+            user.SessionKey.Key = sessionKey;
+            user.SessionKey.ExpirationTime = DateTime.Now.AddHours(2);
+         }
+         return sessionKey;
+      }
+
+      public SessionKey GetSessionKey(User user) {
+         return _Context.SessionKeys.FirstOrDefault(key => key.User.Id == user.Id);
+      }
+
+      public void AddDevice(Device device) {
+         _Context.Devices.Add(device);
+      }
+
+      public Device GetDeviceInfo(int deviceId) {
+         return _Context.Devices.FirstOrDefault(device => device.Id == deviceId);
+      }
+
       public bool RemoveDevice(int id) {
          var device = _Context.Devices.FirstOrDefault(dvc => dvc.Id == id);
          if (device == null) {
@@ -92,17 +104,6 @@ namespace CoreLib.Entity {
          }
          _Context.Devices.Remove(device);
          return true;
-      }
-
-      public SessionKey GetSessionKey(User user) {
-         return _Context.SessionKeys.FirstOrDefault(key => key.User.Id == user.Id);
-      }
-
-      public Device GetDeviceInfo(int deviceId) {
-         return _Context.Devices.FirstOrDefault(device => device.Id == deviceId);
-      }
-      public void AddDevice(Device device) {
-         _Context.Devices.Add(device);
       }
 
       public void Dispose() {

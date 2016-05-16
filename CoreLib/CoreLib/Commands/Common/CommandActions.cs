@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLib.Commands.Common {
+   //Перечисление с действиями команд
    [DataContract]
    public enum CommandActions {
       [EnumMember]

@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.User;
 using CoreLib.Entity;
+using CoreLib.Senders;
 
 namespace Tests {
    [TestClass]

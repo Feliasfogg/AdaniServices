@@ -6,14 +6,57 @@ using System.Text;
 
 namespace CoreLib.Encryption {
    public static class Encrypter {
-      // This constant is used to determine the keysize of the encryption algorithm in bits.
-      // We divide this by 8 within the code below to get the equivalent number of bytes.
+      // Эта константа используется для определения размера ключа алгоритма шифрования в битах. 
+      // Мы разделим ее на 8, чтобы получить эквивалентное число байтов.
       private const int Keysize = 256;
 
-      // This constant determines the number of iterations for the password bytes generation function.
+      //  Эта константа определяет число итераций для функции генерации паролей байт.
       private const int DerivationIterations = 1000;
 
-      public static string Encrypt(string plainText, string passPhrase) {
+      public static string GeneratePassword(int length) {
+         const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+         StringBuilder res = new StringBuilder();
+         var random = new Random();
+         for(int i = 0; i < length; ++i) {
+            res.Append(chars[random.Next(chars.Length)]);
+         }
+         return res.ToString();
+      }
+
+      public static byte[] EncryptData(string data) {
+         /*
+          * Суть шифрования что мы сначала генерируем случайный 8 символьынй ключ - публичный.
+          * На основе приватного ключа мы генерируем его ХЭШ по md5 - приватный ключ
+          * затем этим хэшем мы шифруем данные и после шифрования добавляем в конце 8 символов публичного ключа.
+          * На сервере будет операция в обратном порядке. Основное условия что и сервер и клиент должны получать 
+          * хэш одинаковой хэшфункцией.
+          */
+
+         string publicKey = Encrypter.GeneratePassword(8);
+         string hash = Encrypter.GenerateHash(publicKey);
+         string encryptCommand = Encrypter.Encrypt(data, hash);
+         encryptCommand += publicKey;
+         return Encoding.ASCII.GetBytes(encryptCommand);
+      }
+
+      public static byte[] EncryptData(byte[] data) {
+         return EncryptData(Encoding.ASCII.GetString(data));
+      }
+
+      public static byte[] DecryptData(byte[] data) {
+         /*
+          * Данные зашифрованы публичным 8 значным ключом. Мы точно знаем что в нем 8 символов. Мы берем этот ключ 
+          * и генерируем на его основе MD5 сумму - приватный ключ. Затем дешифруем сообщение. 
+          */
+         string strData = Encoding.ASCII.GetString(data);
+         string publicKey = strData.Substring(data.Length - 8);
+         string privateKey = Encrypter.GenerateHash(publicKey);
+         strData = strData.Substring(0, data.Length - 8);
+         string decryptString = Encrypter.Decrypt(strData, privateKey);
+         return Encoding.ASCII.GetBytes(decryptString);
+      }
+
+      private static string Encrypt(string plainText, string passPhrase) {
          var saltStringBytes = Generate256BitsOfRandomEntropy();
          var ivStringBytes = Generate256BitsOfRandomEntropy();
          var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
@@ -28,7 +71,7 @@ namespace CoreLib.Encryption {
                      using(var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write)) {
                         cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
                         cryptoStream.FlushFinalBlock();
-                        // Create the final bytes as a concatenation of the random salt bytes, the random iv bytes and the cipher bytes.
+                        //Создание байтового массива в виде склеивания случайных байтов
                         var cipherTextBytes = saltStringBytes;
                         cipherTextBytes = cipherTextBytes.Concat(ivStringBytes).ToArray();
                         cipherTextBytes = cipherTextBytes.Concat(memoryStream.ToArray()).ToArray();
@@ -42,18 +85,18 @@ namespace CoreLib.Encryption {
          }
       }
 
-      public static string Decrypt(string cipherText, string passPhrase) {
+      private static string Decrypt(string cipherText, string passPhrase) {
          // Get the complete stream of bytes that represent:
          // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
          var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
-         // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.
+         // Получение байт путем извлечения первых 32 байт из байт шифротекста.
          var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
-         // Get the IV bytes by extracting the next 32 bytes from the supplied cipherText bytes.
+         // Получаем байты через извлечение следующих 32 байт из байт шифротекста.
          var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
-         // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
+         //Получить фактические заэнкрипченные байты, удалив первые 64 байта из строки шифротекста.
          var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
 
-         using(var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations)) {
+         using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations)) {
             var keyBytes = password.GetBytes(Keysize / 8);
             using(var symmetricKey = new RijndaelManaged()) {
                symmetricKey.BlockSize = 256;
@@ -74,24 +117,14 @@ namespace CoreLib.Encryption {
          }
       }
 
-      public static string GeneratePassword(int length) {
-         const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-         StringBuilder res = new StringBuilder();
-         var random = new Random();
-         for(int i = 0; i < length; ++i) {
-            res.Append(chars[random.Next(chars.Length)]);
-         }
-         return res.ToString();
-      }
-
-      public static string GeneratePasswordHash(string thisPassword) {
+      private static string GenerateHash(string thisPassword) {
          MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
          byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(thisPassword); // Turn password into byte array
          byte[] tmpHash = md5.ComputeHash(tmpSource);
 
          StringBuilder output = new StringBuilder(tmpHash.Length);
          for(int i = 0; i < tmpHash.Length; i++) {
-            output.Append(tmpHash[i].ToString("X2")); // X2 formats to hexadecimal
+            output.Append(tmpHash[i].ToString("X2")); // X2 для 16 ричного формата
          }
          return output.ToString();
       }
@@ -99,7 +132,6 @@ namespace CoreLib.Encryption {
       private static byte[] Generate256BitsOfRandomEntropy() {
          var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
          using(var rngCsp = new RNGCryptoServiceProvider()) {
-            // Fill the array with cryptographically secure random bytes.
             rngCsp.GetBytes(randomBytes);
          }
          return randomBytes;

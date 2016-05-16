@@ -87,13 +87,12 @@
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BroadcastHelper.cs" />
-    <Compile Include="Helpers\IListener.cs" />
-    <Compile Include="Helpers\ISender.cs" />
-    <Compile Include="Helpers\CommandListener.cs" />
-    <Compile Include="Helpers\CommandSender.cs" />
+    <Compile Include="Listeners\IListener.cs" />
+    <Compile Include="Senders\ISender.cs" />
+    <Compile Include="Listeners\CommandListener.cs" />
+    <Compile Include="Senders\CommandSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
-    <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

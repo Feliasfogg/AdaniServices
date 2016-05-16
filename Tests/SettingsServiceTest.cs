@@ -11,6 +11,7 @@ using CoreLib.Commands.Settings;
 using CoreLib.Commands.User;
 using CoreLib.Entity;
 using CoreLib.Helpers;
+using CoreLib.Senders;
 using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

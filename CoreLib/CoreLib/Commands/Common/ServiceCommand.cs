@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLib.Commands.Common {
+   //Прототип базовой команды
    [DataContract]
    public class ServiceCommand {
       [DataMember]

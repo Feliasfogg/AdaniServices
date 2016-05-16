@@ -15,6 +15,8 @@ using CoreLib.Commands.Settings;
 using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
+using CoreLib.Listeners;
+using CoreLib.Senders;
 using CoreLib.Serialization;
 
 namespace DeviceSettingsServer.Listeners {
@@ -29,10 +31,7 @@ namespace DeviceSettingsServer.Listeners {
          }
          else {
             //дешифровка
-            string publicKey = strData.Substring(strData.Length - 8);
-            string privateKey = Encrypter.GeneratePasswordHash(publicKey);
-            strData = strData.Substring(0, strData.Length - 8);
-            string decryptXml = Encrypter.Decrypt(strData, privateKey);
+            string decryptXml = Encoding.ASCII.GetString(Encrypter.DecryptData(data));
             //парсинг результирующего xml
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);
@@ -141,6 +140,7 @@ namespace DeviceSettingsServer.Listeners {
             byte[] accessLevel = BitConverter.GetBytes(user.AccessLevel);
 
             if(accessLevel[7] >= 200) {
+               //изменения может вносить только пользователь с доступом выше 200, параметры доступа определяются младшим байтом
                using(var provider = new EntityProvider()) {
                   var device = provider.GetDeviceInfo(command.Device.Id);
                   if(device == null) {
