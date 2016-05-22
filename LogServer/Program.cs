@@ -19,7 +19,7 @@ namespace LogServer
             var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11111);
             LogListener listenerobj = new LogListener(4999, localEp);
             listenerobj.ListenUdpAsync();
-            listenerobj.WriteLog();
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel;
@@ -21,9 +22,13 @@ namespace Tests
     [TestClass]
     public class LoginServiceTests
     {
+        LogSender senderlog=new LogSender(BroadcastHelper.GetBroadcastIp(),4999);
         public string AuthorizeUser()
         {
-            //здесь кусок кода из теста AuthorizationTest, вынес сюда для сокращения объемов других тестов
+            string strSessionKey;
+            try
+            {
+                //здесь кусок кода из теста AuthorizationTest, вынес сюда для сокращения объемов других тестов
             var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
             Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
             var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
@@ -52,13 +57,22 @@ namespace Tests
             string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
             sender.SendTcpCommand(authCommandXml);
             bytes = sender.ReceiveData();
-            string strSessionKey = Encoding.ASCII.GetString(bytes);
+            strSessionKey = Encoding.ASCII.GetString(bytes);
+            senderlog.SendString("Login complete",strSessionKey);
             return strSessionKey;
+            }
+            catch (Exception ex)
+            {
+                strSessionKey = "Exception";
+                senderlog.SendException(ex,"Login failed, no Session Key");
+                return strSessionKey;
+            }
         }
 
         [TestMethod]
         public void SerializeDeserializeTest()
         {
+
             var testInstance = new TestClass()
             {
                 Name = "Test",
@@ -73,59 +87,80 @@ namespace Tests
         }
 
         [TestMethod]
+
         public void GetTcpSettingsTest()
         {
-            var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
-            sender.GetTcpSettings();
+            try
+            {
+                {
+                    var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+                    sender.GetTcpSettings();
+                    senderlog.SendString("GetTcpSetting complete", AuthorizeUser());
+                }
+            }
+            catch (Exception ex)
+            {
+                senderlog.SendException(ex, "GetTcpSetting Failed");
+            }
         }
 
         [TestMethod]
         public void AuthorizationTest()
         {
-            var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
-            Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-
-            var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
-            sender.GetTcpSettings();
-            //создание юзера
-            var newUser = new User()
+            try
             {
-                Login = "felias",
-                Password = "fenris",
-                Name = "pavel",
-                AccessLevel = accessLevel,
-            };
-            //команда создания юзера
-            var addUserCommand = new UserCommand()
-            {
-                Command = CommandActions.AddUser,
-                User = newUser
-            };
-            //сериализация
-            string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
-            //отрпавка команды
-            sender.SendTcpCommand(addUserCommandXml);
-            byte[] bytes = sender.ReceiveData(); //получение ответа
-            Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+                var accessBytes = new byte[] {0, 0, 0, 0, 0, 0, 0, 255};
+                Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
 
-            //команда авторизации
-            var authCommand = new UserCommand()
-            {
-                Command = CommandActions.Authorization,
-                Login = "felias",
-                Password = "fenris"
-            };
+                var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+                sender.GetTcpSettings();
+                //создание юзера
+                var newUser = new User()
+                {
+                    Login = "felias",
+                    Password = "fenris",
+                    Name = "pavel",
+                    AccessLevel = accessLevel,
+                };
+                //команда создания юзера
+                var addUserCommand = new UserCommand()
+                {
+                    Command = CommandActions.AddUser,
+                    User = newUser
+                };
+                //сериализация
+                string addUserCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(addUserCommand);
+                //отрпавка команды
+                sender.SendTcpCommand(addUserCommandXml);
+                byte[] bytes = sender.ReceiveData(); //получение ответа
+                Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
 
-            string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
-            sender.SendTcpCommand(authCommandXml);
-            //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
-            bytes = sender.ReceiveData();
-            string strSessionKey = Encoding.ASCII.GetString(bytes);
+                //команда авторизации
+                var authCommand = new UserCommand()
+                {
+                    Command = CommandActions.Authorization,
+                    Login = "felias",
+                    Password = "fenris"
+                };
+
+                string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
+                sender.SendTcpCommand(authCommandXml);
+                //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
+                bytes = sender.ReceiveData();
+                string strSessionKey = Encoding.ASCII.GetString(bytes);
+                senderlog.SendString("Authorization complete", AuthorizeUser());
+            }
+            catch (Exception ex)
+            {
+                senderlog.SendException(ex, "Authorization Failed");
+            }
         }
 
         [TestMethod]
         public void GetAuthInfoTest()
         {
+            try
+            {
             var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
             Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
             var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
@@ -171,11 +206,19 @@ namespace Tests
 
             User user = XmlSerializer<User>.Deserialize(userInfoXml); //десериализация строки инфы о пользователе в объект
             Assert.IsTrue(user.Login == authCommand.Login && user.Password == authCommand.Password);
+            senderlog.SendString("GetAuthorizationInfo complete", AuthorizeUser());
+            }
+            catch (Exception ex)
+            {
+                senderlog.SendException(ex, "GetAuthorizationInfo Failed");
+            }
         }
 
         [TestMethod]
         public void EditUserTest()
         {
+            try
+            { 
             string strSessionKey = AuthorizeUser();
             var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
             sender.GetTcpSettings();
@@ -210,11 +253,19 @@ namespace Tests
             string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
             Assert.IsTrue(strResponse == "ok");
+            senderlog.SendString("Edit User complete", AuthorizeUser());
+            }
+            catch (Exception ex)
+            {
+                senderlog.SendException(ex, "Edit User Failed");
+            }
         }
 
         [TestMethod]
         public void AddDeleteUserTest()
         {
+            try
+            {
             string strSessionKey = AuthorizeUser();
             var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
             sender.GetTcpSettings();
@@ -245,6 +296,12 @@ namespace Tests
             sender.SendTcpCommand(deleteCommandXml);
             bytes = sender.ReceiveData();
             Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+            senderlog.SendString("Add/Delete complete", AuthorizeUser());
+            }
+            catch (Exception ex)
+            {
+                senderlog.SendException(ex, "Add/Delete Failed");
+            }
         }
     }
 }

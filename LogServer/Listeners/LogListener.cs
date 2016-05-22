@@ -9,6 +9,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using CoreLib.Commands.Log;
+using CoreLib.Helpers;
+using CoreLib.Serialization;
 
 namespace LogServer.Listeners
 {
@@ -18,22 +21,24 @@ namespace LogServer.Listeners
         }
         protected override void Parse(byte[] data)
         {
-            string comname = "save-to-log";
+          
+            string comname = "WriteLog";
             string decryptXml = Encoding.ASCII.GetString(Encrypter.DecryptData(data));
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
-            if (xml.GetElementsByTagName("Command").ToString()==comname)
+            var xmlNode = nodeList.Item(0);
+            if (xmlNode.InnerText == comname)
             {
-                var xmlNode = nodeList.Item(0);
+                WrtieLog(decryptXml);
             }
+
         }
-        public void WriteLog()
+        private void WrtieLog(string xml)
         {
-            string path=System.IO.Directory.GetCurrentDirectory().ToString()+@"logger.txt";
-            byte[] txtbuff = new byte[4096];
-            FileStream str = new FileStream("path", FileMode.Append, FileAccess.Write);
-            str.WriteAsync(txtbuff, 0, (int)str.Length);
+            var command = XmlSerializer<LogCommand>.Deserialize(xml);
+            string fullmess = $"Message: {command.Message} SessionKey: {command.SessionKey}\n";
+            LogHelper.Write(fullmess);
         }
     }
 }

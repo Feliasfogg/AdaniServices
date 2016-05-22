@@ -35,6 +35,9 @@ namespace CoreLib.Commands.Common {
       EditDevice,
 
       [EnumMember]
-      RemoveDevice
-   }
+      RemoveDevice,
+
+      [EnumMember]
+      WriteLog
+    }
 }
