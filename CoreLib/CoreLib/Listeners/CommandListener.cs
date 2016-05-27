@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using CoreLib.Commands;
@@ -29,6 +30,7 @@ namespace CoreLib.Listeners {
       protected IPEndPoint _LocalTcpEp;
       protected int _ListenPort;
       protected TcpListener _TcpListener;
+
       /// <summary>
       /// Создает объект слушателя, который слушает Udp и Tcp протоколы
       /// </summary>
@@ -85,9 +87,10 @@ namespace CoreLib.Listeners {
             Task.Run(() => Parse(data));
          }
       }
+
       //метод парсит получаемые данные, его имплементация расположена в наследниках
       protected abstract void Parse(byte[] data);
-      
+
       protected void SendTcpSettings() {
          var strAddress = _LocalTcpEp.ToString();
          byte[] btarr = Encoding.ASCII.GetBytes(strAddress);
@@ -96,14 +99,26 @@ namespace CoreLib.Listeners {
          client.Connect(_RemoteUdpEp);
          client.Send(btarr, btarr.Length);
       }
+
       //метод для посылки ответа запросившему клиенту.
       protected void SendResponse(byte[] data) {
          //шифрование данных
          byte[] encryptData = Encrypter.EncryptData(data);
 
          TcpClient client = new TcpClient();
-         client.Connect(_RemoteTcpEp);
-         using (NetworkStream networkStream = client.GetStream()) {
+
+         //TODO незабыть поправить костыль
+         //ожидаем пока не стороне клиента появится принимающий сокет
+         while(!client.Connected) {
+            try {
+               client.Connect(_RemoteTcpEp);
+            }
+            catch(SocketException ex) {
+               continue;
+            }
+         }
+
+         using(NetworkStream networkStream = client.GetStream()) {
             networkStream.Write(encryptData, 0, encryptData.Length);
          }
          client.Close();
