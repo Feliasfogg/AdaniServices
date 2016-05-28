@@ -18,7 +18,7 @@ namespace CoreLib.Senders
         public void SendException(Exception ex, string sessionkey)
         {
             string fullText =
-               $"[{DateTime.Now:dd.MM.yyy HH:mm:ss.fff}] [{ex.TargetSite.DeclaringType}.{ex.TargetSite.Name}()] {ex.Message}\r\n";
+               $"[{DateTime.Now:dd.MM.yyy HH:mm:ss.fff}] [{ex.TargetSite.DeclaringType}.{ex.TargetSite.Name}()] {ex.Message}";
             var command= new LogCommand()
             {
             Command = CommandActions.WriteLog,

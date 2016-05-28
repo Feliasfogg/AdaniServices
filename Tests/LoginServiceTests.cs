@@ -23,9 +23,10 @@ namespace Tests
     public class LoginServiceTests
     {
         LogSender senderlog=new LogSender(BroadcastHelper.GetBroadcastIp(),4999);
+        string strSessionKey;
         public string AuthorizeUser()
         {
-            string strSessionKey;
+           
             try
             {
                 //здесь кусок кода из теста AuthorizationTest, вынес сюда для сокращения объемов других тестов
@@ -95,7 +96,7 @@ namespace Tests
                 {
                     var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
                     sender.GetTcpSettings();
-                    senderlog.SendString("GetTcpSetting complete", AuthorizeUser());
+                    senderlog.SendString("GetTcpSetting complete", strSessionKey);
                 }
             }
             catch (Exception ex)
@@ -148,7 +149,7 @@ namespace Tests
                 //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
                 bytes = sender.ReceiveData();
                 string strSessionKey = Encoding.ASCII.GetString(bytes);
-                senderlog.SendString("Authorization complete", AuthorizeUser());
+                senderlog.SendString("Authorization complete", strSessionKey);
             }
             catch (Exception ex)
             {
@@ -206,7 +207,7 @@ namespace Tests
 
             User user = XmlSerializer<User>.Deserialize(userInfoXml); //десериализация строки инфы о пользователе в объект
             Assert.IsTrue(user.Login == authCommand.Login && user.Password == authCommand.Password);
-            senderlog.SendString("GetAuthorizationInfo complete", AuthorizeUser());
+            senderlog.SendString("GetAuthorizationInfo complete", strSessionKey);
             }
             catch (Exception ex)
             {
@@ -253,7 +254,7 @@ namespace Tests
             string strResponse = Encoding.ASCII.GetString(btarrResponse);
 
             Assert.IsTrue(strResponse == "ok");
-            senderlog.SendString("Edit User complete", AuthorizeUser());
+            senderlog.SendString("Edit User complete", strSessionKey);
             }
             catch (Exception ex)
             {
@@ -296,7 +297,7 @@ namespace Tests
             sender.SendTcpCommand(deleteCommandXml);
             bytes = sender.ReceiveData();
             Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
-            senderlog.SendString("Add/Delete complete", AuthorizeUser());
+            senderlog.SendString("Add/Delete complete", strSessionKey);
             }
             catch (Exception ex)
             {

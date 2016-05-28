@@ -37,7 +37,7 @@ namespace LogServer.Listeners
         private void WrtieLog(string xml)
         {
             var command = XmlSerializer<LogCommand>.Deserialize(xml);
-            string fullmess = $"Message: {command.Message} SessionKey: {command.SessionKey}\n";
+            string fullmess = $"{command.Message} SessionKey: {command.SessionKey}";
             LogHelper.Write(fullmess);
         }
     }

@@ -12,7 +12,7 @@ using DeviceSettingsServer.Listeners;
 namespace DeviceSettingsServer {
    class Program {
       static void Main(string[] args) {
-         var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11111);
+         var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 12000);
 
          var listener = new SettingsListener(4555, localEp);
          listener.ListenUdpAsync();

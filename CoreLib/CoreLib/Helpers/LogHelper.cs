@@ -25,21 +25,16 @@ namespace CoreLib.Helpers
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
                 string filename = Path.Combine(pathToLog, string.Format("{0}_{1:dd.MM.yyy}.log",
                     AppDomain.CurrentDomain.FriendlyName, DateTime.Now));
-                string fullText = obj;
+                string fullText = obj+Environment.NewLine;
                 lock (sync)
                 {
-                    File.AppendAllText(filename, fullText, Encoding.GetEncoding("Windows-1251"));
+                    File.AppendAllText(filename, fullText, Encoding.GetEncoding("utf-8"));
                 }
             }
             catch
             {
                 // Перехватываем все и ничего не делаем
             }
-        }
-
-        public static void StringWrite(string obj)
-        {
-            ///some code
         }
     }
 }
