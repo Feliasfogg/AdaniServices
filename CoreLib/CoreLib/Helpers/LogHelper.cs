@@ -19,21 +19,20 @@ namespace CoreLib.Helpers
         {
             try
             {
-                // Путь .\\Log
+                // Путь
                 string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
                 if (!Directory.Exists(pathToLog))
-                    Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
-                string filename = Path.Combine(pathToLog, string.Format("{0}_{1:dd.MM.yyy}.log",
-                    AppDomain.CurrentDomain.FriendlyName, DateTime.Now));
+                    Directory.CreateDirectory(pathToLog); // Создаем директорию
+                string filename = Path.Combine(pathToLog, $"{AppDomain.CurrentDomain.FriendlyName}_{DateTime.Now:dd.MM.yyy}.log");
                 string fullText = obj+Environment.NewLine;
                 lock (sync)
                 {
-                    File.AppendAllText(filename, fullText, Encoding.GetEncoding("utf-8"));
+                    File.AppendAllText(filename, fullText, Encoding.UTF8);
                 }
             }
             catch
             {
-                // Перехватываем все и ничего не делаем
+               
             }
         }
     }

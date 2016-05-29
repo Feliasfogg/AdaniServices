@@ -17,19 +17,21 @@ namespace CoreLib.Senders
         }
         public void SendException(Exception ex, string sessionkey)
         {
-            string fullText =
-               $"[{DateTime.Now:dd.MM.yyy HH:mm:ss.fff}] [{ex.TargetSite.DeclaringType}.{ex.TargetSite.Name}()] {ex.Message}";
-            var command= new LogCommand()
+            if (ex.TargetSite.DeclaringType != null)
             {
-            Command = CommandActions.WriteLog,
-                Message = fullText,SessionKey = sessionkey
-            };
-            var xml = XmlSerializer<LogCommand>.SerializeToXmlString(command);
-            SendBroadcastCommand(xml);
+                string fullText = $"[{DateTime.Now:dd.MM.yyy HH:mm:ss}] [{ex.Message}]";
+                var command= new LogCommand()
+                {
+                    Command = CommandActions.WriteLog,
+                    Message = fullText,SessionKey = sessionkey
+                };
+                var xml = XmlSerializer<LogCommand>.SerializeToXmlString(command);
+                SendBroadcastCommand(xml);
+            }
         }
         public void SendString(String message, string sessionkey)
         {
-            string mess = $"[{DateTime.Now:dd.MM.yyy HH:mm:ss.fff}] {message}";
+            string mess = $"[{DateTime.Now:dd.MM.yyy HH:mm:ss}] [{message}]";
             var command = new LogCommand()
             {
                 Command = CommandActions.WriteLog,

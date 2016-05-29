@@ -51,7 +51,7 @@ namespace CoreLib.Serialization {
 
       public static TClass Deserialize(string xmlString) {
          XmlSerializer _Serializer = new XmlSerializer(typeof(TClass));
-         byte[] btarr = Encoding.ASCII.GetBytes(xmlString);
+         byte[] btarr = Encoding.UTF8.GetBytes(xmlString);
          Stream stream = new MemoryStream(btarr);
          return (TClass)_Serializer.Deserialize(stream);
       }

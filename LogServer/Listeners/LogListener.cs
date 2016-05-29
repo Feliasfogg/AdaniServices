@@ -21,14 +21,13 @@ namespace LogServer.Listeners
         }
         protected override void Parse(byte[] data)
         {
-          
-            string comname = "WriteLog";
+            //string comname = "WriteLog";
             string decryptXml = Encoding.ASCII.GetString(Encrypter.DecryptData(data));
             var xml = new XmlDocument();
             xml.LoadXml(decryptXml);
             XmlNodeList nodeList = xml.GetElementsByTagName("Command");
             var xmlNode = nodeList.Item(0);
-            if (xmlNode.InnerText == comname)
+            if (xmlNode.InnerText == "WriteLog")
             {
                 WrtieLog(decryptXml);
             }
@@ -37,7 +36,7 @@ namespace LogServer.Listeners
         private void WrtieLog(string xml)
         {
             var command = XmlSerializer<LogCommand>.Deserialize(xml);
-            string fullmess = $"{command.Message} SessionKey: {command.SessionKey}";
+            string fullmess = $"{command.Message} SessionKey: { command.SessionKey}";
             LogHelper.Write(fullmess);
         }
     }

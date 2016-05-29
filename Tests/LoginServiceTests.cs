@@ -64,8 +64,8 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                strSessionKey = "Exception";
-                senderlog.SendException(ex,"Login failed, no Session Key");
+                strSessionKey = "No Session Key";
+                senderlog.SendException(ex, strSessionKey);
                 return strSessionKey;
             }
         }
@@ -101,7 +101,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                senderlog.SendException(ex, "GetTcpSetting Failed");
+                senderlog.SendException(ex, strSessionKey);
             }
         }
 
@@ -148,12 +148,12 @@ namespace Tests
                 sender.SendTcpCommand(authCommandXml);
                 //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
                 bytes = sender.ReceiveData();
-                string strSessionKey = Encoding.ASCII.GetString(bytes);
+                strSessionKey = Encoding.ASCII.GetString(bytes);
                 senderlog.SendString("Authorization complete", strSessionKey);
             }
             catch (Exception ex)
             {
-                senderlog.SendException(ex, "Authorization Failed");
+                senderlog.SendException(ex, strSessionKey);
             }
         }
 
@@ -211,7 +211,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                senderlog.SendException(ex, "GetAuthorizationInfo Failed");
+                senderlog.SendException(ex, strSessionKey);
             }
         }
 
@@ -258,7 +258,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                senderlog.SendException(ex, "Edit User Failed");
+                senderlog.SendException(ex, strSessionKey);
             }
         }
 
@@ -301,7 +301,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                senderlog.SendException(ex, "Add/Delete Failed");
+                senderlog.SendException(ex, strSessionKey);
             }
         }
     }
