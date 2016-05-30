@@ -18,7 +18,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Tests {
    [TestClass]
    public class SettingsServiceTest {
-      [TestMethod]
+        LogSender senderlog = new LogSender(BroadcastHelper.GetBroadcastIp(), 4999);
+       private string strSessionKey;
+        [TestMethod]
       public void GetTcpSettingsTest() {
          var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          sender.GetTcpSettings();
@@ -50,13 +52,13 @@ namespace Tests {
          string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          sender.SendTcpCommand(authCommandXml);
          bytes = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(bytes);
+         strSessionKey = Encoding.ASCII.GetString(bytes);
          return strSessionKey;
       }
 
       [TestMethod]
       public void GetDeviceInfoTest() {
-         string strSessionKey = AuthorizeUser();
+         strSessionKey = AuthorizeUser();
 
          var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
          settingsCommandSender.GetTcpSettings();
@@ -76,121 +78,155 @@ namespace Tests {
 
       [TestMethod]
       public void AddDeviceTest() {
-         string strSessionKey = AuthorizeUser();
+          try
+          {
+              strSessionKey = AuthorizeUser();
 
-         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
-         settingsCommandSender.GetTcpSettings();
+              var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+              settingsCommandSender.GetTcpSettings();
 
-         var newDevice = new Device() {
-            DeviceGroupId = 1,
-            ConnectionType = "COM",
-            GeneratorType = 2,
-            NormalVoltage = 200,
-            HighVoltage = 200,
-            NormalCurrent = 175,
-            HighCurrent = 200,
-            HighMode = 0,
-            ReseasonDate = 422.111,
-            WorkTime = 1.365,
-            XRayTime = 0.512,
-            LastWorkedDate = 422.111,
-            Name = "H-projection"
-         };
+              var newDevice = new Device()
+              {
+                  DeviceGroupId = 1,
+                  ConnectionType = "COM",
+                  GeneratorType = 2,
+                  NormalVoltage = 200,
+                  HighVoltage = 200,
+                  NormalCurrent = 175,
+                  HighCurrent = 200,
+                  HighMode = 0,
+                  ReseasonDate = 422.111,
+                  WorkTime = 1.365,
+                  XRayTime = 0.512,
+                  LastWorkedDate = 422.111,
+                  Name = "H-projection"
+              };
 
-         var deviceSettingsCommand = new SettingsCommand() {
-            Command = CommandActions.AddDevice,
-            Device = newDevice,
-            SessionKey = strSessionKey,
-         };
+              var deviceSettingsCommand = new SettingsCommand()
+              {
+                  Command = CommandActions.AddDevice,
+                  Device = newDevice,
+                  SessionKey = strSessionKey,
+              };
 
-         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+              string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] bytes = settingsCommandSender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+              settingsCommandSender.SendTcpCommand(xmlCommand);
+              byte[] bytes = settingsCommandSender.ReceiveData();
+              Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+              senderlog.SendString("Add Device complete", strSessionKey);
+            }
+          catch (Exception ex)
+          {
+                strSessionKey = "Exception";
+                senderlog.SendException(ex, "no Session Key");
+            }
       }
 
       [TestMethod]
       public void EditDeviceTest() {
-         string strSessionKey = AuthorizeUser();
+          try
+          {
+              strSessionKey = AuthorizeUser();
 
-         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
-         settingsCommandSender.GetTcpSettings();
+              var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+              settingsCommandSender.GetTcpSettings();
 
-         var deviceSettingsCommand = new SettingsCommand() {
-            Command = CommandActions.GetDevice,
-            SessionKey = strSessionKey,
-            DeviceId = 2
-         };
+              var deviceSettingsCommand = new SettingsCommand()
+              {
+                  Command = CommandActions.GetDevice,
+                  SessionKey = strSessionKey,
+                  DeviceId = 2
+              };
 
-         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+              string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] bytes = settingsCommandSender.ReceiveData();
-         Device device = XmlSerializer<Device>.Deserialize(bytes);
+              settingsCommandSender.SendTcpCommand(xmlCommand);
+              byte[] bytes = settingsCommandSender.ReceiveData();
+              Device device = XmlSerializer<Device>.Deserialize(bytes);
 
-         device.ConnectionType = "USB";
+              device.ConnectionType = "USB";
 
-         deviceSettingsCommand = new SettingsCommand() {
-            Command = CommandActions.EditDevice,
-            SessionKey = strSessionKey,
-            Device = device
-         };
+              deviceSettingsCommand = new SettingsCommand()
+              {
+                  Command = CommandActions.EditDevice,
+                  SessionKey = strSessionKey,
+                  Device = device
+              };
 
-         xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
-         settingsCommandSender.SendTcpCommand(xmlCommand);
-         bytes = settingsCommandSender.ReceiveData();
-         string result = Encoding.ASCII.GetString(bytes);
-         Assert.IsTrue(result == "ok");
+              xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+              settingsCommandSender.SendTcpCommand(xmlCommand);
+              bytes = settingsCommandSender.ReceiveData();
+              string result = Encoding.ASCII.GetString(bytes);
+              Assert.IsTrue(result == "ok");
+              senderlog.SendString("Edit Device complete", strSessionKey);
+            }
+          catch (Exception ex)
+          {
+                strSessionKey = "Exception";
+                senderlog.SendException(ex, "no Session Key");
+            }
       }
 
       [TestMethod]
       public void CreateRemoveDevice() {
-         string strSessionKey = AuthorizeUser();
+          try
+          {
+              strSessionKey = AuthorizeUser();
 
-         var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
-         settingsCommandSender.GetTcpSettings();
-         //создаем настройки оборудования
-         var newDevice = new Device() {
-            DeviceGroupId = 1,
-            ConnectionType = "COM",
-            GeneratorType = 2,
-            NormalVoltage = 200,
-            HighVoltage = 200,
-            NormalCurrent = 175,
-            HighCurrent = 200,
-            HighMode = 0,
-            ReseasonDate = 422.111,
-            WorkTime = 1.365,
-            XRayTime = 0.512,
-            LastWorkedDate = 422.111,
-            Name = "H-projection"
-         };
+              var settingsCommandSender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4555);
+              settingsCommandSender.GetTcpSettings();
+              //создаем настройки оборудования
+              var newDevice = new Device()
+              {
+                  DeviceGroupId = 1,
+                  ConnectionType = "COM",
+                  GeneratorType = 2,
+                  NormalVoltage = 200,
+                  HighVoltage = 200,
+                  NormalCurrent = 175,
+                  HighCurrent = 200,
+                  HighMode = 0,
+                  ReseasonDate = 422.111,
+                  WorkTime = 1.365,
+                  XRayTime = 0.512,
+                  LastWorkedDate = 422.111,
+                  Name = "H-projection"
+              };
 
-         var deviceSettingsCommand = new SettingsCommand() {
-            Command = CommandActions.AddDevice,
-            Device = newDevice,
-            SessionKey = strSessionKey,
-         };
+              var deviceSettingsCommand = new SettingsCommand()
+              {
+                  Command = CommandActions.AddDevice,
+                  Device = newDevice,
+                  SessionKey = strSessionKey,
+              };
 
-         string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+              string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendTcpCommand(xmlCommand);
-         byte[] bytes = settingsCommandSender.ReceiveData();
-         Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
+              settingsCommandSender.SendTcpCommand(xmlCommand);
+              byte[] bytes = settingsCommandSender.ReceiveData();
+              Assert.IsTrue(Encoding.ASCII.GetString(bytes) == "ok");
 
-         deviceSettingsCommand = new SettingsCommand() {
-            Command = CommandActions.RemoveDevice,
-            DeviceId = 2,
-            SessionKey = strSessionKey
-         };
+              deviceSettingsCommand = new SettingsCommand()
+              {
+                  Command = CommandActions.RemoveDevice,
+                  DeviceId = 2,
+                  SessionKey = strSessionKey
+              };
 
-         xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+              xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
 
-         settingsCommandSender.SendTcpCommand(xmlCommand);
-         bytes = settingsCommandSender.ReceiveData();
-         string result = Encoding.ASCII.GetString(bytes);
-         Assert.IsTrue(result == "ok");
+              settingsCommandSender.SendTcpCommand(xmlCommand);
+              bytes = settingsCommandSender.ReceiveData();
+              string result = Encoding.ASCII.GetString(bytes);
+              Assert.IsTrue(result == "ok");
+              senderlog.SendString("Create/Remove complete", strSessionKey);
+            }
+          catch (Exception ex)
+          {
+                strSessionKey = "Exception";
+                senderlog.SendException(ex, "no Session Key");
+            }
       }
    }
 }
