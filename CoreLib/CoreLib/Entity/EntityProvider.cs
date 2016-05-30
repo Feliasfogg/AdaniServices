@@ -19,7 +19,7 @@ namespace CoreLib.Entity {
       }
 
       public bool AddUser(User user) {
-         //TODO незабыть потом снова включить проверку
+         //TODO незабыть потом снова включить проверку 
          //var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
          //if(existUser != null) {
          //   return false;
@@ -99,7 +99,7 @@ namespace CoreLib.Entity {
 
       public bool RemoveDevice(int id) {
          var device = _Context.Devices.FirstOrDefault(dvc => dvc.Id == id);
-         if (device == null) {
+         if(device == null) {
             return false;
          }
          _Context.Devices.Remove(device);

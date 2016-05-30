@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace CoreLib.Helpers {
    public static class BroadcastHelper {
+      public static IPAddress BroadCastIp {
+         get { return GetBroadcastIp(); }
+      }
+
       public static IPAddress GetBroadcastIp() {
          string ipadress;
          IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName()); // get a list of all local IPs

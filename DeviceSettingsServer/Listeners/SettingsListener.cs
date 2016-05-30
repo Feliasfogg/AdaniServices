@@ -56,10 +56,10 @@ namespace DeviceSettingsServer.Listeners {
             }
          }
       }
-        
+
       private User GetUserInfo(string sessionKey) {
          try {
-            var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+            var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
             sender.GetTcpSettings();
 
             var authInfoCommand = new ServiceCommand() {

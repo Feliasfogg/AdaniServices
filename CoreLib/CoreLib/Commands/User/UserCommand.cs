@@ -14,6 +14,7 @@ namespace CoreLib.Commands.User {
    public class UserCommand : ServiceCommand {
       [DataMember]
       public Entity.User User { get; set; }
+
       [DataMember]
       public int UserId { get; set; }
 

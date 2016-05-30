@@ -33,11 +33,13 @@ namespace CoreLib.Senders {
          _BroadCastAddress = new IPEndPoint(broadcastAddress, targetPort);
          _RemoteUdpEndPoint = new IPEndPoint(broadcastAddress, targetPort);
       }
+
       //посылка широковещательной зашифрованной команды
       public void SendBroadcastCommand(string command) {
          byte[] bytes = Encrypter.EncryptData(command);
          _UdpClient.Send(bytes, bytes.Length, _BroadCastAddress);
       }
+
       //посылка зашифрованной команды по Tcp
       public void SendTcpCommand(string command) {
          var tcpClient = new TcpClient();
@@ -51,6 +53,7 @@ namespace CoreLib.Senders {
          }
          tcpClient.Close();
       }
+
       //Получение данных от сервера.
       public byte[] ReceiveData() {
          var tcpListner = new TcpListener(_LocalTcpEp);

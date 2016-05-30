@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSettingsServer", "Dev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogServer", "LogServer\LogServer.csproj", "{8B12D8E6-9694-4878-BB25-2BD272742C0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "TestApplication\TestApplication.csproj", "{69760933-B2AC-4E32-8115-CEBF5EBF6F22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8B12D8E6-9694-4878-BB25-2BD272742C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B12D8E6-9694-4878-BB25-2BD272742C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B12D8E6-9694-4878-BB25-2BD272742C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69760933-B2AC-4E32-8115-CEBF5EBF6F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69760933-B2AC-4E32-8115-CEBF5EBF6F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69760933-B2AC-4E32-8115-CEBF5EBF6F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69760933-B2AC-4E32-8115-CEBF5EBF6F22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

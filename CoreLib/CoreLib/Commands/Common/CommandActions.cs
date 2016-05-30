@@ -39,5 +39,5 @@ namespace CoreLib.Commands.Common {
 
       [EnumMember]
       WriteLog
-    }
+   }
 }

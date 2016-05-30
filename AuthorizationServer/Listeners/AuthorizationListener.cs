@@ -83,7 +83,7 @@ namespace AuthorizationServer.Listeners {
          try {
             var command = XmlSerializer<ServiceCommand>.Deserialize(xmlCommand);
             string xmlUserInfo;
-            using (var provider = new EntityProvider()) {
+            using(var provider = new EntityProvider()) {
                User user = provider.GetUserByKey(command.SessionKey);
                if(user == null) {
                   throw new Exception("No exist user");
@@ -91,7 +91,8 @@ namespace AuthorizationServer.Listeners {
                xmlUserInfo = XmlSerializer<User>.SerializeToXmlString(user);
             }
             SendResponse(xmlUserInfo);
-         } catch (Exception ex) {
+         }
+         catch(Exception ex) {
             SendResponse($"{ex.Message} in {nameof(GetUser)}");
          }
       }

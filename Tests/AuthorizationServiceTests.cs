@@ -23,7 +23,7 @@ namespace Tests {
          //здесь кусок кода из теста AuthorizationTest, вынес сюда для сокращения объемов других тестов
          var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
          Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
          var newUser = new User() {
             Login = "felias",
@@ -46,8 +46,8 @@ namespace Tests {
          string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          sender.SendTcpCommand(authCommandXml);
          bytes = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(bytes);
-         return strSessionKey;
+         string sessionKey = Encoding.ASCII.GetString(bytes);
+         return sessionKey;
       }
 
       [TestMethod]
@@ -66,7 +66,7 @@ namespace Tests {
 
       [TestMethod]
       public void GetTcpSettingsTest() {
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
       }
 
@@ -75,7 +75,7 @@ namespace Tests {
          var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
          Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
 
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
          //создание юзера
          var newUser = new User() {
@@ -107,14 +107,14 @@ namespace Tests {
          sender.SendTcpCommand(authCommandXml);
          //отрпавка команды на авторизацию, в ответ от сервера должен прийти сессионный ключ авторизации
          bytes = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(bytes);
+         string sessionKey = Encoding.ASCII.GetString(bytes);
       }
 
       [TestMethod]
       public void GetAuthInfoTest() {
          var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
          Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
          var newUser = new User() {
             Login = "felias",
@@ -137,12 +137,12 @@ namespace Tests {
          string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          sender.SendTcpCommand(authCommandXml);
          bytes = sender.ReceiveData();
-         string strSessionKey = Encoding.ASCII.GetString(bytes);
+         string sessionKey = Encoding.ASCII.GetString(bytes);
 
          //команда получения инфы о пользователе
          var userInfoCommand = new ServiceCommand() {
             Command = CommandActions.GetUser,
-            SessionKey = strSessionKey,
+            SessionKey = sessionKey,
          };
 
          string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);
@@ -157,14 +157,14 @@ namespace Tests {
 
       [TestMethod]
       public void EditUserTest() {
-         string strSessionKey = AuthorizeUser();
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         string sessionKey = AuthorizeUser();
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
 
          //команда получения инфы об авторизации
          var userInfoCommand = new ServiceCommand() {
             Command = CommandActions.GetUser,
-            SessionKey = strSessionKey
+            SessionKey = sessionKey
          };
 
          string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);
@@ -193,14 +193,14 @@ namespace Tests {
 
       [TestMethod]
       public void AddDeleteUserTest() {
-         string strSessionKey = AuthorizeUser();
-         var sender = new CommandSender(BroadcastHelper.GetBroadcastIp(), 4444);
+         string sessionKey = AuthorizeUser();
+         var sender = new CommandSender(BroadcastHelper.BroadCastIp, 4444);
          sender.GetTcpSettings();
 
          //команда получения инфы о пользователе
          var userInfoCommand = new ServiceCommand() {
             Command = CommandActions.GetUser,
-            SessionKey = strSessionKey,
+            SessionKey = sessionKey,
          };
 
          string userInfoCommandXml = XmlSerializer<ServiceCommand>.SerializeToXmlString(userInfoCommand);

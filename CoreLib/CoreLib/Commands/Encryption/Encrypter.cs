@@ -96,7 +96,7 @@ namespace CoreLib.Encryption {
          //Получить фактические заэнкрипченные байты, удалив первые 64 байта из строки шифротекста.
          var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
 
-         using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations)) {
+         using(var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations)) {
             var keyBytes = password.GetBytes(Keysize / 8);
             using(var symmetricKey = new RijndaelManaged()) {
                symmetricKey.BlockSize = 256;

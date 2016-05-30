@@ -6,12 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLib.Commands.Common;
 
-namespace CoreLib.Commands.Log
-{
-    [DataContract]
-    public class LogCommand: ServiceCommand
-    {
-        [DataMember]
-        public string Message { get; set; }    
-    }
+namespace CoreLib.Commands.Log {
+   [DataContract]
+   public class LogCommand : ServiceCommand {
+      [DataMember]
+      public string Message { get; set; }
+   }
 }
