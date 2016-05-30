@@ -1,24 +1,9 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
-using System.ServiceModel;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using CoreLib.Commands;
 using CoreLib.Encryption;
-using CoreLib.Entity;
-using CoreLib.Serialization;
-
 
 namespace CoreLib.Listeners {
    /// <summary>

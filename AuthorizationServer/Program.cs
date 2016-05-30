@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLib.Helpers;
-using System.ServiceModel;
-using System.Xml.Serialization;
 using AuthorizationServer.Listeners;
-using CoreLib.Commands.Common;
-using CoreLib.Entity;
-using CoreLib.Serialization;
 
 namespace AuthorizationServer {
    class Program {

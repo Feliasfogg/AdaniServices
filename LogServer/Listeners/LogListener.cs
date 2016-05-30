@@ -1,13 +1,7 @@
 ﻿using CoreLib.Encryption;
 using CoreLib.Listeners;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using CoreLib.Commands.Log;
 using CoreLib.Helpers;
@@ -32,7 +26,13 @@ namespace LogServer.Listeners {
 
       private void WrtieLog(string xml) {
          var command = XmlSerializer<LogCommand>.Deserialize(xml);
-         string fullMessage = $"{command.Message} SessionKey: {command.SessionKey}";
+         string fullMessage;
+         if(command.SessionKey !=null) {
+            fullMessage = $"{command.Message} SessionKey: {command.SessionKey}";
+         }
+         else {
+            fullMessage = $"{command.Message}";
+         }
          LogHelper.Write(fullMessage);
       }
    }

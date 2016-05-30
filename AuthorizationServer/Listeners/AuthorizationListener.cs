@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Reflection.Emit;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using CoreLib;
-using CoreLib.Commands;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.User;
 using CoreLib.Encryption;
 using CoreLib.Entity;
-using CoreLib.Helpers;
 using CoreLib.Listeners;
 using CoreLib.Serialization;
 

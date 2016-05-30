@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using CoreLib.Commands;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
 using CoreLib.Encryption;
