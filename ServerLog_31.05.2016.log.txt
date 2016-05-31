@@ -1,0 +1,210 @@
+﻿[31.05.2016 11:41:48] [Try add new user]
+[31.05.2016 11:44:27] [Try add new user]
+[31.05.2016 11:44:27] [Try get TCP settings for 4444]
+[31.05.2016 11:44:27] [TCP settings received successfully] SessionKey: 
+[31.05.2016 11:44:36] [New user added succesfully]
+[31.05.2016 11:44:36] [Try authorization for felias]
+[31.05.2016 11:44:36] [Authorization completed succesfully] SessionKey: LXfxvhNjlKHnfuQZvTMXniD0KKqjuBoU
+[31.05.2016 11:44:36] [Try add new user]
+[31.05.2016 11:44:36] [New user added succesfully]
+[31.05.2016 11:44:36] [Try authorization for felias]
+[31.05.2016 11:44:36] [Authorization completed succesfully] SessionKey: Cqtf0ARBCbpFuYfpOxqyevHfCnjTZ8Td
+[31.05.2016 11:44:36] [Try get user info] SessionKey: Cqtf0ARBCbpFuYfpOxqyevHfCnjTZ8Td
+[31.05.2016 11:44:36] [User info received succefully] SessionKey: Cqtf0ARBCbpFuYfpOxqyevHfCnjTZ8Td
+[31.05.2016 11:44:36] [Authorization completed succesfully] SessionKey: Cqtf0ARBCbpFuYfpOxqyevHfCnjTZ8Td
+[31.05.2016 11:44:36] [Try add new user]
+[31.05.2016 11:44:36] [New user addded succesfully]
+[31.05.2016 11:44:36] [Try authorization for felias]
+[31.05.2016 11:44:36] [Authorization completed succesfully] SessionKey: Mz5Df9WBmHexFu9TFFtyHmTZIpFU2jxs
+[31.05.2016 11:44:36] [Try get user info] SessionKey: Mz5Df9WBmHexFu9TFFtyHmTZIpFU2jxs
+[31.05.2016 11:44:37] [User info received succesfully] SessionKey: Mz5Df9WBmHexFu9TFFtyHmTZIpFU2jxs
+[31.05.2016 11:44:37] [Try edit user info] SessionKey: Mz5Df9WBmHexFu9TFFtyHmTZIpFU2jxs
+[31.05.2016 11:44:37] [User info edit succesfully] SessionKey: Mz5Df9WBmHexFu9TFFtyHmTZIpFU2jxs
+[31.05.2016 11:44:37] [Try add new user]
+[31.05.2016 11:44:37] [New user addded succesfully]
+[31.05.2016 11:44:37] [Try authorization for felias]
+[31.05.2016 11:44:37] [Authorization completed succesfully] SessionKey: A2uC8HQA9jfVPGPnMT5m3ioag9f2DCht
+[31.05.2016 11:44:37] [Try get user info] SessionKey: A2uC8HQA9jfVPGPnMT5m3ioag9f2DCht
+[31.05.2016 11:44:37] [User info received succesfully] SessionKey: A2uC8HQA9jfVPGPnMT5m3ioag9f2DCht
+[31.05.2016 11:44:37] [Try delete user info] SessionKey: A2uC8HQA9jfVPGPnMT5m3ioag9f2DCht
+[31.05.2016 11:44:37] [User deleted succesfully] SessionKey: A2uC8HQA9jfVPGPnMT5m3ioag9f2DCht
+[31.05.2016 11:44:59] [Try get TCP settings for 4555]
+[31.05.2016 11:44:59] [TCP settings received successfully]
+[31.05.2016 11:44:59] [Try add new user]
+[31.05.2016 11:44:59] [New user added succesfully]
+[31.05.2016 11:44:59] [Try authorization for felias]
+[31.05.2016 11:44:59] [Authorization completed succesfully] SessionKey: itumT64btNXIfWNGyevRLbVmx96DVGhO
+[31.05.2016 11:44:59] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: itumT64btNXIfWNGyevRLbVmx96DVGhO
+[31.05.2016 11:44:59] [Try add new user]
+[31.05.2016 11:44:59] [New user added succesfully]
+[31.05.2016 11:44:59] [Try authorization for felias]
+[31.05.2016 11:44:59] [Authorization completed succesfully] SessionKey: ZkchjvQ1CKJHNeHsabzhC4xGRpRuzij5
+[31.05.2016 11:44:59] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: ZkchjvQ1CKJHNeHsabzhC4xGRpRuzij5
+[31.05.2016 11:44:59] [Try add new user]
+[31.05.2016 11:44:59] [New user added succesfully]
+[31.05.2016 11:44:59] [Try authorization for felias]
+[31.05.2016 11:44:59] [Authorization completed succesfully] SessionKey: cuBpcN5kS5et33iScJE5AbjmhkuZvHJA
+[31.05.2016 11:44:59] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: cuBpcN5kS5et33iScJE5AbjmhkuZvHJA
+[31.05.2016 11:44:59] [Try add new user]
+[31.05.2016 11:45:00] [New user added succesfully]
+[31.05.2016 11:45:00] [Try authorization for felias]
+[31.05.2016 11:45:00] [Authorization completed succesfully] SessionKey: 4YP8R79C0uXLhwGiunjFrnnr9Xny2ddT
+[31.05.2016 11:45:00] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: 4YP8R79C0uXLhwGiunjFrnnr9Xny2ddT
+[31.05.2016 11:46:17] [Try add new user]
+[31.05.2016 11:46:18] [New user added succesfully]
+[31.05.2016 11:46:18] [Try authorization for felias]
+[31.05.2016 11:46:18] [Authorization completed succesfully] SessionKey: MpKHXdCzRpzbLSohgt5QBaIQcss7B8r1
+[31.05.2016 11:46:31] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: MpKHXdCzRpzbLSohgt5QBaIQcss7B8r1
+[31.05.2016 11:46:52] [Try add new user]
+[31.05.2016 11:46:52] [New user added succesfully]
+[31.05.2016 11:46:52] [Try authorization for felias]
+[31.05.2016 11:46:52] [Authorization completed succesfully] SessionKey: I1oqRbq63CawHqdn1wl2IHV2kMwyAtsb
+[31.05.2016 11:47:15] [Try add new user]
+[31.05.2016 11:47:15] [New user added succesfully]
+[31.05.2016 11:47:15] [Try authorization for felias]
+[31.05.2016 11:47:15] [Authorization completed succesfully] SessionKey: fYyFokSqzBzgdyMeUqC8E3vewtWyRi0U
+[31.05.2016 11:51:06] [Try add new user]
+[31.05.2016 11:51:07] [New user added succesfully]
+[31.05.2016 11:51:07] [Try authorization for felias]
+[31.05.2016 11:51:07] [Authorization completed succesfully] SessionKey: vQHGcfUlL7H3iQXj0u2RwqEYn68UMlxB
+[31.05.2016 11:52:39] [Try add new user]
+[31.05.2016 11:52:39] [New user added succesfully]
+[31.05.2016 11:52:39] [Try authorization for felias]
+[31.05.2016 11:52:40] [Authorization completed succesfully] SessionKey: efqoDYVferXw0IKdqSIjhh68ZoG4B3n5
+[31.05.2016 11:53:39] [Try add new user]
+[31.05.2016 11:53:39] [New user added succesfully]
+[31.05.2016 11:53:39] [Try authorization for felias]
+[31.05.2016 11:53:39] [Authorization completed succesfully] SessionKey: zJWLU6EeN26BpAYfMaENWkq4ILG1Enp8
+[31.05.2016 11:53:39] [There was an error reflecting type 'CoreLib.Commands.Settings.SettingsCommand'.] SessionKey: zJWLU6EeN26BpAYfMaENWkq4ILG1Enp8
+[31.05.2016 11:53:53] [Try add new user]
+[31.05.2016 11:53:54] [New user added succesfully]
+[31.05.2016 11:53:54] [Try authorization for felias]
+[31.05.2016 11:53:54] [Authorization completed succesfully] SessionKey: YpK2frww30d5PHX6cN45czOj0Kd1chHY
+[31.05.2016 11:56:09] [Try add new user]
+[31.05.2016 11:56:09] [New user added succesfully]
+[31.05.2016 11:56:09] [Try authorization for felias]
+[31.05.2016 11:56:09] [Authorization completed succesfully] SessionKey: wFKARjeT3ctEfoDRudfxYHnGGeMeDvIn
+[31.05.2016 11:57:52] [Try add new user]
+[31.05.2016 11:57:53] [New user added succesfully]
+[31.05.2016 11:57:53] [Try authorization for felias]
+[31.05.2016 11:57:53] [Authorization completed succesfully] SessionKey: qUiRcAY56hPcOUV50RuQAYv04dDpIwUe
+[31.05.2016 11:59:31] [Try add new user]
+[31.05.2016 11:59:31] [New user added succesfully]
+[31.05.2016 11:59:31] [Try authorization for felias]
+[31.05.2016 11:59:31] [Authorization completed succesfully] SessionKey: 9yWnyqFrlPXnqVs2uz6wd3gTAOPA9ttD
+[31.05.2016 12:01:25] [Try add new user]
+[31.05.2016 12:01:26] [New user added succesfully]
+[31.05.2016 12:01:26] [Try authorization for felias]
+[31.05.2016 12:01:26] [Authorization completed succesfully] SessionKey: RtdprVMnBNu7c6roV2Ti1n75KQtcecjP
+[31.05.2016 12:02:13] [Try add new user]
+[31.05.2016 12:02:13] [New user added succesfully]
+[31.05.2016 12:02:13] [Try authorization for felias]
+[31.05.2016 12:02:13] [Authorization completed succesfully] SessionKey: 1igCmFvx3CDxzB1mE8eVo5x58tMNghjb
+[31.05.2016 12:06:02] [Try add new user]
+[31.05.2016 12:06:02] [New user added succesfully]
+[31.05.2016 12:06:02] [Try authorization for felias]
+[31.05.2016 12:06:02] [Authorization completed succesfully] SessionKey: OqANtEC9fng9pZRpWKhDQTHMTeeIx1R3
+[31.05.2016 12:06:07] [Try get device info for deviceId:4] SessionKey: OqANtEC9fng9pZRpWKhDQTHMTeeIx1R3
+[31.05.2016 12:06:24] [Try add new user]
+[31.05.2016 12:06:24] [New user added succesfully]
+[31.05.2016 12:06:24] [Try authorization for felias]
+[31.05.2016 12:06:24] [Authorization completed succesfully] SessionKey: g48UZ34x2zcu4bmP4Ne9ILHoGopqsD02
+[31.05.2016 12:06:25] [Try create new device] SessionKey: g48UZ34x2zcu4bmP4Ne9ILHoGopqsD02
+[31.05.2016 12:06:42] [Assert.IsTrue failed. ] SessionKey: g48UZ34x2zcu4bmP4Ne9ILHoGopqsD02
+[31.05.2016 12:08:18] [Try add new user]
+[31.05.2016 12:08:19] [New user added succesfully]
+[31.05.2016 12:08:19] [Try authorization for felias]
+[31.05.2016 12:08:19] [Authorization completed succesfully] SessionKey: bcJQQhzfrWdEVx8JlIkHPthalrnkXZAO
+[31.05.2016 12:08:21] [Try create new device] SessionKey: bcJQQhzfrWdEVx8JlIkHPthalrnkXZAO
+[31.05.2016 12:08:26] [New device created succesfully] SessionKey: bcJQQhzfrWdEVx8JlIkHPthalrnkXZAO
+[31.05.2016 12:08:32] [Try add new user]
+[31.05.2016 12:08:32] [New user added succesfully]
+[31.05.2016 12:08:32] [Try authorization for felias]
+[31.05.2016 12:08:33] [Authorization completed succesfully] SessionKey: 8ZPxLE254zM6jrPYnm5L0GOa327zzA80
+[31.05.2016 12:08:33] [Try create new device] SessionKey: 8ZPxLE254zM6jrPYnm5L0GOa327zzA80
+[31.05.2016 12:08:33] [New device created succesfully] SessionKey: 8ZPxLE254zM6jrPYnm5L0GOa327zzA80
+[31.05.2016 12:08:36] [Try add new user]
+[31.05.2016 12:08:36] [New user added succesfully]
+[31.05.2016 12:08:36] [Try authorization for felias]
+[31.05.2016 12:08:36] [Authorization completed succesfully] SessionKey: 2dmkPGlP0XGzWg2zH0JMi6low2zTOI6K
+[31.05.2016 12:08:36] [Try create new device] SessionKey: 2dmkPGlP0XGzWg2zH0JMi6low2zTOI6K
+[31.05.2016 12:08:36] [New device created succesfully] SessionKey: 2dmkPGlP0XGzWg2zH0JMi6low2zTOI6K
+[31.05.2016 12:08:38] [Try add new user]
+[31.05.2016 12:08:38] [New user added succesfully]
+[31.05.2016 12:08:38] [Try authorization for felias]
+[31.05.2016 12:08:39] [Authorization completed succesfully] SessionKey: tp6zGXtCwDkaIQYJv0EZf6Bp3b31iMJq
+[31.05.2016 12:08:39] [Try create new device] SessionKey: tp6zGXtCwDkaIQYJv0EZf6Bp3b31iMJq
+[31.05.2016 12:08:39] [New device created succesfully] SessionKey: tp6zGXtCwDkaIQYJv0EZf6Bp3b31iMJq
+[31.05.2016 12:08:41] [Try add new user]
+[31.05.2016 12:08:41] [New user added succesfully]
+[31.05.2016 12:08:41] [Try authorization for felias]
+[31.05.2016 12:08:41] [Authorization completed succesfully] SessionKey: fT1BHjKpnnAwPrGS1qDd9PfXLodaQdGy
+[31.05.2016 12:08:41] [Try create new device] SessionKey: fT1BHjKpnnAwPrGS1qDd9PfXLodaQdGy
+[31.05.2016 12:08:42] [New device created succesfully] SessionKey: fT1BHjKpnnAwPrGS1qDd9PfXLodaQdGy
+[31.05.2016 12:08:43] [Try add new user]
+[31.05.2016 12:08:43] [New user added succesfully]
+[31.05.2016 12:08:43] [Try authorization for felias]
+[31.05.2016 12:08:43] [Authorization completed succesfully] SessionKey: EvQwTbVmCcFE3pwgty4O83c5nZ0vfMnK
+[31.05.2016 12:08:43] [Try create new device] SessionKey: EvQwTbVmCcFE3pwgty4O83c5nZ0vfMnK
+[31.05.2016 12:08:44] [New device created succesfully] SessionKey: EvQwTbVmCcFE3pwgty4O83c5nZ0vfMnK
+[31.05.2016 12:08:46] [Try add new user]
+[31.05.2016 12:08:46] [New user added succesfully]
+[31.05.2016 12:08:46] [Try authorization for felias]
+[31.05.2016 12:08:46] [Authorization completed succesfully] SessionKey: zwxQge8RbvdIUxRZGcnq0zMwfAr7iIPz
+[31.05.2016 12:08:46] [Try create new device] SessionKey: zwxQge8RbvdIUxRZGcnq0zMwfAr7iIPz
+[31.05.2016 12:08:46] [New device created succesfully] SessionKey: zwxQge8RbvdIUxRZGcnq0zMwfAr7iIPz
+[31.05.2016 12:08:50] [Try get TCP settings for 4555]
+[31.05.2016 12:08:51] [TCP settings received successfully]
+[31.05.2016 12:08:51] [Try add new user]
+[31.05.2016 12:08:51] [New user added succesfully]
+[31.05.2016 12:08:51] [Try authorization for felias]
+[31.05.2016 12:08:51] [Authorization completed succesfully] SessionKey: 6gJHPfoRQ5G7iKIsncXEhVyUMHkfiaqK
+[31.05.2016 12:08:51] [Try get device info for deviceId:4] SessionKey: 6gJHPfoRQ5G7iKIsncXEhVyUMHkfiaqK
+[31.05.2016 12:08:51] [Device settings received succesfully] SessionKey: 6gJHPfoRQ5G7iKIsncXEhVyUMHkfiaqK
+[31.05.2016 12:08:51] [Try add new user]
+[31.05.2016 12:08:51] [New user added succesfully]
+[31.05.2016 12:08:51] [Try authorization for felias]
+[31.05.2016 12:08:51] [Authorization completed succesfully] SessionKey: 1iQK9YpZemXS6QdF2H8R8VWUxTKASbRw
+[31.05.2016 12:08:51] [Try create new device] SessionKey: 1iQK9YpZemXS6QdF2H8R8VWUxTKASbRw
+[31.05.2016 12:08:51] [New device created succesfully] SessionKey: 1iQK9YpZemXS6QdF2H8R8VWUxTKASbRw
+[31.05.2016 12:08:51] [Try add new user]
+[31.05.2016 12:08:51] [New user added succesfully]
+[31.05.2016 12:08:51] [Try authorization for felias]
+[31.05.2016 12:08:51] [Authorization completed succesfully] SessionKey: r45iMy0W25cLgIH0pZiskWIuvkzN5BHk
+[31.05.2016 12:08:51] [Try get device info for deviceId:4] SessionKey: r45iMy0W25cLgIH0pZiskWIuvkzN5BHk
+[31.05.2016 12:08:52] [Device info received succesfully] SessionKey: r45iMy0W25cLgIH0pZiskWIuvkzN5BHk
+[31.05.2016 12:08:52] [Try edit device info for 4] SessionKey: r45iMy0W25cLgIH0pZiskWIuvkzN5BHk
+[31.05.2016 12:08:52] [Edit Device completed succesfully] SessionKey: r45iMy0W25cLgIH0pZiskWIuvkzN5BHk
+[31.05.2016 12:08:52] [Try add new user]
+[31.05.2016 12:08:52] [New user added succesfully]
+[31.05.2016 12:08:52] [Try authorization for felias]
+[31.05.2016 12:08:52] [Authorization completed succesfully] SessionKey: ybRX5l5CfMjJnVTI5IhFgxlkitDldzAh
+[31.05.2016 12:08:52] [Try add new device] SessionKey: ybRX5l5CfMjJnVTI5IhFgxlkitDldzAh
+[31.05.2016 12:08:52] [Device created successfully] SessionKey: ybRX5l5CfMjJnVTI5IhFgxlkitDldzAh
+[31.05.2016 12:08:52] [Try remove device deviceId7] SessionKey: ybRX5l5CfMjJnVTI5IhFgxlkitDldzAh
+[31.05.2016 12:08:52] [Create/Remove device completed succesfully] SessionKey: ybRX5l5CfMjJnVTI5IhFgxlkitDldzAh
+[31.05.2016 13:10:13] [Try add new user]
+[31.05.2016 13:10:13] [New user added succesfully]
+[31.05.2016 13:10:13] [Try authorization for felias]
+[31.05.2016 13:10:13] [Authorization completed succesfully] SessionKey: 30MqoTN3OREnvFOksJw3yV0v5kTBQeiy
+[31.05.2016 13:10:37] [Try export database:0] SessionKey: 30MqoTN3OREnvFOksJw3yV0v5kTBQeiy
+[31.05.2016 13:33:39] [Try add new user]
+[31.05.2016 13:33:39] [New user added succesfully]
+[31.05.2016 13:33:39] [Try authorization for felias]
+[31.05.2016 13:33:39] [Authorization completed succesfully] SessionKey: lQbhUMIumW1T0imVHQqHGrBuMmEwFd0i
+[31.05.2016 13:33:42] [Try export database:0] SessionKey: lQbhUMIumW1T0imVHQqHGrBuMmEwFd0i
+[31.05.2016 13:34:43] [Try add new user]
+[31.05.2016 13:34:43] [New user added succesfully]
+[31.05.2016 13:34:43] [Try authorization for felias]
+[31.05.2016 13:34:43] [Authorization completed succesfully] SessionKey: KK6fZleQ5rBPkLgCH2LOvB0sb1gERcYv
+[31.05.2016 13:34:45] [Try export database:0] SessionKey: KK6fZleQ5rBPkLgCH2LOvB0sb1gERcYv
+[31.05.2016 13:36:00] [Try add new user]
+[31.05.2016 13:36:00] [New user added succesfully]
+[31.05.2016 13:36:00] [Try authorization for felias]
+[31.05.2016 13:36:00] [Authorization completed succesfully] SessionKey: qscNQwP04vg2mcc5Q3TZUZc7NCkuECVq
+[31.05.2016 13:36:01] [Try export database:0] SessionKey: qscNQwP04vg2mcc5Q3TZUZc7NCkuECVq
+[31.05.2016 13:37:18] [Try add new user]
+[31.05.2016 13:37:18] [New user added succesfully]
+[31.05.2016 13:37:18] [Try authorization for felias]
+[31.05.2016 13:37:19] [Authorization completed succesfully] SessionKey: 9rcYOh7EmtJ2lSiUKz7YwkfuqNElqNkI
+[31.05.2016 13:37:20] [Try export database:0] SessionKey: 9rcYOh7EmtJ2lSiUKz7YwkfuqNElqNkI

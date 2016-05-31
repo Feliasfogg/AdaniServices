@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<tcp_address>
+		<ip>127.0.0.1</ip>
+		<port>11000</port>
+	</tcp_address>
+	<udp_port>4444</udp_port>
+	<data_folder></data_folder>
+</settings>
