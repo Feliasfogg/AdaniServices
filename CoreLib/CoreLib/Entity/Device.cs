@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace CoreLib.Entity
 {
@@ -42,7 +43,7 @@ namespace CoreLib.Entity
       public double LastWorkedDate { get; set; }
       [DataMember]
       public string Name { get; set; }
-      [DataMember]
+      [XmlIgnore]
       public virtual DeviceGroup DeviceGroup { get; set; }
    }
 }

@@ -16,11 +16,11 @@ namespace CoreLib.Entity {
       }
 
       public bool AddUser(User user) {
-         //TODO незабыть потом снова включить проверку 
-         //var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
-         //if(existUser != null) {
-         //   return false;
-         //}
+         //TODO незабыть потом снова включить проверку на существвоание такого же пользователя
+         var existUser = _Context.Users.FirstOrDefault(usr => usr.Login == user.Login);
+         if (existUser != null) {
+            return false;
+         }
          _Context.Users.Add(user);
          return true;
       }

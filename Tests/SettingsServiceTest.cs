@@ -223,5 +223,31 @@ namespace Tests {
             logSender.SendException(ex, sessionKey);
          }
       }
+
+      [TestMethod]
+      public void ExportDatabase() {
+         try {
+            sessionKey = AuthorizeUser();
+
+            var settingsCommandSender = new CommandSender(BroadcastHelper.BroadCastIp, 4555);
+            settingsCommandSender.GetTcpSettings();
+
+            var deviceSettingsCommand = new SettingsCommand() {
+               Command = CommandActions.ExportDataBase,
+               SessionKey = sessionKey,
+            };
+
+            string xmlCommand = XmlSerializer<SettingsCommand>.SerializeToXmlString(deviceSettingsCommand);
+
+            settingsCommandSender.SendTcpCommand(xmlCommand);
+            logSender.SendString($"Try export database:{deviceSettingsCommand.DeviceId}", sessionKey);
+            byte[] bytes = settingsCommandSender.ReceiveData();
+            string data = Encoding.ASCII.GetString(bytes);
+            logSender.SendString($"Database exported succesfully", sessionKey);
+         }
+         catch(Exception ex) {
+            logSender.SendException(ex, sessionKey);
+         }
+      }
    }
 }

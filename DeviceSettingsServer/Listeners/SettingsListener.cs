@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.SqlClient;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -10,6 +13,8 @@ using CoreLib.Helpers;
 using CoreLib.Listeners;
 using CoreLib.Senders;
 using CoreLib.Serialization;
+using System.Configuration;
+
 
 namespace DeviceSettingsServer.Listeners {
    public class SettingsListener : CommandListener {
@@ -31,6 +36,9 @@ namespace DeviceSettingsServer.Listeners {
             var xmlNode = nodeList.Item(0);
             //выбор команды для выполнения
             switch(xmlNode.InnerText) {
+            case "ExportDataBase":
+               ExportDataBase(decryptXml);
+               break;
             case "GetDevice":
                GetDevice(decryptXml);
                break;
@@ -185,6 +193,45 @@ namespace DeviceSettingsServer.Listeners {
                throw new Exception($"User with ID={user.Id} cant edit device settings");
             }
             SendResponse("ok");
+         }
+         catch(Exception ex) {
+            SendResponse($"{ex.Message} in {nameof(AddDevice)}");
+         }
+      }
+
+      private void ExportDataBase(string xmlCommand) {
+         try {
+            var command = XmlSerializer<SettingsCommand>.Deserialize(xmlCommand);
+
+            User user = GetUserInfo(command.SessionKey);
+            if(user == null) {
+               throw new Exception("Cant get user info in");
+            }
+            byte[] accessLevel = BitConverter.GetBytes(user.AccessLevel);
+
+            if(accessLevel[7] >= 200) {
+               DataSet ds = new DataSet();
+               var tables = new[] { "DeviceGroups", "Devices" };
+               string data = String.Empty;
+
+               string connectionString = new EntityConnectionStringBuilder(ConfigurationManager.ConnectionStrings["EntityDataModelContainer"].ConnectionString).ProviderConnectionString;
+
+               foreach(var table in tables) {
+                  var query = $"SELECT * FROM {table}";
+                  SqlConnection conn = new SqlConnection(connectionString);
+                  SqlCommand cmd = new SqlCommand(query, conn);
+                  conn.Open();
+                  SqlDataAdapter da = new SqlDataAdapter(cmd);
+                  da.Fill(ds);
+                  conn.Close();
+                  conn.Dispose();
+                  data += ds.GetXml();
+               }
+               SendResponse(data);
+            }
+            else {
+               throw new Exception($"User with ID={user.Id} cant edit device settings");
+            }
          }
          catch(Exception ex) {
             SendResponse($"{ex.Message} in {nameof(AddDevice)}");

@@ -32,6 +32,8 @@ namespace CoreLib.Commands.Common {
       RemoveDevice,
 
       [EnumMember]
-      WriteLog
+      WriteLog,
+      [EnumMember]
+      ExportDataBase
    }
 }

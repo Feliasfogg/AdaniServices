@@ -2,8 +2,10 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CoreLib.Encryption;
+using Timer = System.Timers.Timer;
 
 namespace CoreLib.Listeners {
    /// <summary>
@@ -92,13 +94,21 @@ namespace CoreLib.Listeners {
 
          TcpClient client = new TcpClient();
 
-         //TODO незабыть поправить костыль
-         //ожидаем пока не стороне клиента появится принимающий сокет
+         //ожидаем 30c пока не стороне клиента появится принимающий сокет,
+         //если не появился return
+         double timeOut = 10000;
          while(!client.Connected) {
             try {
                client.Connect(_RemoteTcpEp);
             }
             catch(SocketException ex) {
+               Thread.Sleep(1000);
+               timeOut -= 1000;
+               if(timeOut <= 0) {
+                  //return сделан вместо выброса исключения потому что если принимающий сокет так и не проявился
+                  //мы будем пытаться циклично передать текст исключения сокету.
+                  return;
+               }
                continue;
             }
          }
