@@ -14,14 +14,16 @@ namespace CoreLib.Entity
     using System;
     using System.Collections.Generic;
     [DataContract]
-    public partial class SessionKey {
-        [DataMember]
+    public partial class SessionKey
+    {
+      [DataMember]
         public int Id { get; set; }
-        [DataMember]
-        public string Key { get; set; }
-        [DataMember]
-        public System.DateTime ExpirationTime { get; set; }
-        [DataMember]
-        public virtual User User { get; set; }
-    }
+      [DataMember]
+      public string Key { get; set; }
+      [DataMember]
+      public System.DateTime ExpirationTime { get; set; }
+
+      [DataMember]
+      public virtual User User { get; set; }
+   }
 }

@@ -16,17 +16,18 @@ namespace CoreLib.Entity
     [DataContract]
     public partial class User
     {
-        [DataMember]
+      [DataMember]
         public int Id { get; set; }
-        [DataMember]
+      [DataMember]
         public string Name { get; set; }
-        [DataMember]
-        public string Login { get; set; }
-        [DataMember]
-        public string Password { get; set; }
-        [DataMember]
-        public long AccessLevel { get; set; }
-        [DataMember]
-        public virtual SessionKey SessionKey { get; set; }
-    }
+      [DataMember]
+      public string Login { get; set; }
+      [DataMember]
+      public string PasswordHash { get; set; }
+      [DataMember]
+      public long AccessLevel { get; set; }
+
+      [DataMember]
+      public virtual SessionKey SessionKey { get; set; }
+   }
 }

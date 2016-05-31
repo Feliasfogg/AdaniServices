@@ -56,7 +56,7 @@ namespace AuthorizationServer.Listeners {
             var command = XmlSerializer<UserCommand>.Deserialize(xmlCommand);
             string sessionKey;
             using(var provider = new EntityProvider()) {
-               User user = provider.GetUserByCredentials(command.Login, command.Password);
+               User user = provider.GetUserByCredentials(command.Login, command.PasswordHash);
                if(user != null) {
                   sessionKey = provider.CreateSessionKey(user);
                }
@@ -100,7 +100,7 @@ namespace AuthorizationServer.Listeners {
                //если сделать так user = command.User; то изменения в базу незапушутся
                user.AccessLevel = command.User.AccessLevel;
                user.Login = command.User.Login;
-               user.Password = command.User.Password;
+               user.PasswordHash = command.User.PasswordHash;
                user.Name = command.User.Name;
             }
             SendResponse("ok");

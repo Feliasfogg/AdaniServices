@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Net;
 using AuthorizationServer.Listeners;
+using CoreLib.Settings;
 
 namespace AuthorizationServer {
    class Program {
       static void Main(string[] args) {
-         //var btarr = new byte[] { 0, 0, 0, 0, 0, 0, 0, 250 };
-         //Int64 v = BitConverter.ToInt64(btarr, 0);
-         //var bt = BitConverter.GetBytes(v);
+         ServerSettings serverSettings = ServerSettingsReader.ReadXml();
 
-         var localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000);
-         var setter = new AuthorizationListener(4444, localEp);
-         setter.ListenUdpAsync();
-         setter.ListenTcpAsync();
+         //tcp/ip127.0.0.1:1111 udp:4444
+         var listener = new AuthorizationListener(serverSettings.UdpPort, serverSettings.TcpEp);
+         listener.ListenUdpAsync();
+         listener.ListenTcpAsync();
          Console.ReadLine();
       }
    }

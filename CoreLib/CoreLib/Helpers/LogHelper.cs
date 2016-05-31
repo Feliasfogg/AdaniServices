@@ -6,14 +6,13 @@ namespace CoreLib.Helpers {
    public class LogHelper {
       private static object sync = new object();
 
-      public static void Write(string obj) {
+      public static void Write(string obj, string folderPath) {
          try {
             // Путь
-            string pathToLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ServerLogs");
-            if(!Directory.Exists(pathToLog)) {
-               Directory.CreateDirectory(pathToLog); // Создаем директорию
+            if(!Directory.Exists(folderPath)) {
+               Directory.CreateDirectory(folderPath); // Создаем директорию
             }
-            string filename = Path.Combine(pathToLog, $"ServerLog_{DateTime.Now:dd.MM.yyy}.log");
+            string filename = Path.Combine(folderPath, $"ServerLog_{DateTime.Now:dd.MM.yyy}.log");
             string fullText = obj + Environment.NewLine;
             lock(sync) {
                File.AppendAllText(filename, fullText, Encoding.UTF8);

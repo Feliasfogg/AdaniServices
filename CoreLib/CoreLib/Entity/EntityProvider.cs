@@ -26,7 +26,7 @@ namespace CoreLib.Entity {
       }
 
       public User GetUserByCredentials(string login, string password) {
-         return _Context.Users.FirstOrDefault(user => user.Login == login && user.Password == password);
+         return _Context.Users.FirstOrDefault(user => user.Login == login && user.PasswordHash == password);
       }
 
       public User GetUserById(int id) {
@@ -45,7 +45,7 @@ namespace CoreLib.Entity {
             Id = user.Id,
             AccessLevel = user.AccessLevel,
             Login = user.Login,
-            Password = user.Password,
+            PasswordHash = user.PasswordHash,
             Name = user.Name
          };
          return proxy;

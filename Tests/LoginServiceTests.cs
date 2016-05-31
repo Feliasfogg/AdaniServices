@@ -6,6 +6,7 @@ using CoreLib.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.User;
+using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Senders;
 
@@ -26,7 +27,7 @@ namespace Tests {
             sender.GetTcpSettings();
             var newUser = new User() {
                Login = "felias",
-               Password = "fenris",
+               PasswordHash = Encrypter.GenerateHash("fenris"),
                Name = "pavel",
                AccessLevel = accessLevel,
             };
@@ -46,7 +47,7 @@ namespace Tests {
             var authCommand = new UserCommand() {
                Command = CommandActions.Authorization,
                Login = "felias",
-               Password = "fenris"
+               PasswordHash = Encrypter.GenerateHash("fenris")
             };
             string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
             senderlog.SendString($"Try authorization for {authCommand.Login}");
@@ -103,7 +104,7 @@ namespace Tests {
             //создание юзера
             var newUser = new User() {
                Login = "felias",
-               Password = "fenris",
+               PasswordHash = Encrypter.GenerateHash("fenris"),
                Name = "pavel",
                AccessLevel = accessLevel,
             };
@@ -124,7 +125,7 @@ namespace Tests {
             var authCommand = new UserCommand() {
                Command = CommandActions.Authorization,
                Login = "felias",
-               Password = "fenris"
+               PasswordHash = Encrypter.GenerateHash("fenris")
             };
 
             string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
@@ -149,7 +150,7 @@ namespace Tests {
             sender.GetTcpSettings();
             var newUser = new User() {
                Login = "felias",
-               Password = "fenris",
+               PasswordHash = Encrypter.GenerateHash("fenris"),
                Name = "pavel",
                AccessLevel = accessLevel,
             };
@@ -167,7 +168,7 @@ namespace Tests {
             var authCommand = new UserCommand() {
                Command = CommandActions.Authorization,
                Login = "felias",
-               Password = "fenris"
+               PasswordHash = Encrypter.GenerateHash("fenris")
             };
             string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
             logSender.SendString($"Try authorization for {authCommand.Login}");
@@ -189,7 +190,7 @@ namespace Tests {
             string userInfoXml = Encoding.ASCII.GetString(bytes); //инфа о пользователе
             logSender.SendString($"User info received succefully", sessionKey);
             User user = XmlSerializer<User>.Deserialize(userInfoXml); //десериализация строки инфы о пользователе в объект
-            Assert.IsTrue(user.Login == authCommand.Login && user.Password == authCommand.Password);
+            Assert.IsTrue(user.Login == authCommand.Login && user.PasswordHash == authCommand.PasswordHash);
             logSender.SendString("Authorization completed succesfully", sessionKey);
          }
          catch(Exception ex) {
@@ -220,7 +221,7 @@ namespace Tests {
 
             //изменяем инфу о пользоателе
             user.Login = "newlogin";
-            user.Password = "newpasword";
+            user.PasswordHash = Encrypter.GenerateHash("newpasword");
 
             //command for edit user info
             var editCommand = new UserCommand() {

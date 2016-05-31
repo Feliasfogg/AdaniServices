@@ -33,7 +33,7 @@
                <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
                <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
                <Property Name="Login" Type="nvarchar(max)" Nullable="false" />
-               <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+               <Property Name="PasswordHash" Type="nvarchar(max)" Nullable="false" />
                <Property Name="AccessLevel" Type="bigint" Nullable="false" />
             </EntityType>
             <EntityType Name="SessionKeys">
@@ -126,7 +126,7 @@
                <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
                <Property Name="Name" Type="String" Nullable="true" />
                <Property Name="Login" Type="String" Nullable="false" />
-               <Property Name="Password" Type="String" Nullable="false" />
+               <Property Name="PasswordHash" Type="String" Nullable="false" />
                <NavigationProperty Name="SessionKey" Relationship="EntityDataModel.UserSessionKey" FromRole="User"
                                    ToRole="SessionKey" />
                <Property Name="AccessLevel" Type="Int64" Nullable="false" />
@@ -200,7 +200,7 @@
                         <ScalarProperty Name="Id" ColumnName="Id" />
                         <ScalarProperty Name="Name" ColumnName="Name" />
                         <ScalarProperty Name="Login" ColumnName="Login" />
-                        <ScalarProperty Name="Password" ColumnName="Password" />
+                        <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                         <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
                      </MappingFragment>
                   </EntityTypeMapping>

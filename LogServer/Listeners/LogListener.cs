@@ -9,7 +9,10 @@ using CoreLib.Serialization;
 
 namespace LogServer.Listeners {
    public class LogListener : CommandListener {
-      public LogListener(int listenPort, IPEndPoint localTcpEp) : base(listenPort, localTcpEp) {
+      private string _FolderPath;
+
+      public LogListener(int listenPort, IPEndPoint localTcpEp, string folderPath) : base(listenPort, localTcpEp) {
+         _FolderPath = folderPath;
       }
 
       protected override void Parse(byte[] data) {
@@ -27,13 +30,13 @@ namespace LogServer.Listeners {
       private void WrtieLog(string xml) {
          var command = XmlSerializer<LogCommand>.Deserialize(xml);
          string fullMessage;
-         if(command.SessionKey !=null) {
+         if(command.SessionKey != null) {
             fullMessage = $"{command.Message} SessionKey: {command.SessionKey}";
          }
          else {
             fullMessage = $"{command.Message}";
          }
-         LogHelper.Write(fullMessage);
+         LogHelper.Write(fullMessage, _FolderPath);
       }
    }
 }

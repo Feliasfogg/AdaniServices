@@ -14,6 +14,6 @@ namespace CoreLib.Commands.User {
       public string Login { get; set; }
 
       [DataMember]
-      public string Password { get; set; }
+      public string PasswordHash { get; set; }
    }
 }

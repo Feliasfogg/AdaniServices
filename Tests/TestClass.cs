@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+
 namespace Tests {
    [DataContract]
    public class TestClass {

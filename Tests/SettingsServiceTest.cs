@@ -3,6 +3,7 @@ using System.Text;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
 using CoreLib.Commands.User;
+using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Senders;
@@ -30,7 +31,7 @@ namespace Tests {
          sender.GetTcpSettings();
          var newUser = new User() {
             Login = "felias",
-            Password = "fenris",
+            PasswordHash = Encrypter.GenerateHash("fenris"),
             Name = "pavel",
             AccessLevel = accessLevel,
          };
@@ -47,7 +48,7 @@ namespace Tests {
          var authCommand = new UserCommand() {
             Command = CommandActions.Authorization,
             Login = "felias",
-            Password = "fenris"
+            PasswordHash = Encrypter.GenerateHash("fenris")
          };
          string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
          logSender.SendString($"Try authorization for {authCommand.Login}");

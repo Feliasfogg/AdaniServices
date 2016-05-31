@@ -57,7 +57,7 @@
     <Compile Include="Commands\Common\CommandActions.cs" />
     <Compile Include="Commands\Settings\SettingsCommand.cs" />
     <Compile Include="Commands\Common\ServiceCommand.cs" />
-    <Compile Include="Commands\Encryption\Encrypter.cs" />
+    <Compile Include="Encryption\Encrypter.cs" />
     <Compile Include="Entity\Device.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
@@ -89,6 +89,8 @@
     </Compile>
     <Compile Include="Helpers\BroadcastHelper.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Settings\ServerSettings.cs" />
+    <Compile Include="Settings\ServerSettingsReader.cs" />
     <Compile Include="Listeners\IListener.cs" />
     <Compile Include="Senders\ISender.cs" />
     <Compile Include="Listeners\CommandListener.cs" />

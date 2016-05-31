@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/04/2016 17:28:20
+-- Date Created: 05/30/2016 23:37:05
 -- Generated from EDMX file: D:\GIT\AdaniServices\CoreLib\CoreLib\Entity\EntityDataModel.edmx
 -- --------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE [dbo].[Users] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NULL,
     [Login] nvarchar(max)  NOT NULL,
-    [Password] nvarchar(max)  NOT NULL,
+    [PasswordHash] nvarchar(max)  NOT NULL,
     [AccessLevel] bigint  NOT NULL
 );
 GO

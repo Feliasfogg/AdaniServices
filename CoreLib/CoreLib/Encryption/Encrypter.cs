@@ -117,11 +117,13 @@ namespace CoreLib.Encryption {
          }
       }
 
-      private static string GenerateHash(string thisPassword) {
+      public static string GenerateHash(string thisPassword) {
          MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-         byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(thisPassword); // Turn password into byte array
+         byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(thisPassword);
          byte[] tmpHash = md5.ComputeHash(tmpSource);
-
+         for(int i = 0; i < 3; ++i) {
+            tmpHash = md5.ComputeHash(tmpHash);
+         }
          StringBuilder output = new StringBuilder(tmpHash.Length);
          for(int i = 0; i < tmpHash.Length; i++) {
             output.Append(tmpHash[i].ToString("X2")); // X2 для 16 ричного формата

@@ -3,14 +3,18 @@ using System.Text;
 using CoreLib.Commands.Common;
 using CoreLib.Commands.Settings;
 using CoreLib.Commands.User;
+using CoreLib.Encryption;
 using CoreLib.Entity;
 using CoreLib.Helpers;
 using CoreLib.Senders;
 using CoreLib.Serialization;
+using CoreLib.Settings;
 
 namespace TestApplication {
    class Program {
       static void Main(string[] args) {
+         ServerSettingsReader.ReadXml();
+
          LogSender logSender = new LogSender(BroadcastHelper.BroadCastIp, 4999);
          var accessBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 255 };
          Int64 accessLevel = BitConverter.ToInt64(accessBytes, 0);
@@ -22,7 +26,7 @@ namespace TestApplication {
             //создание юзера
             var newUser = new User() {
                Login = "felias",
-               Password = "fenris",
+               PasswordHash = Encrypter.GenerateHash("fenris"),
                Name = "pavel",
                AccessLevel = accessLevel,
             };
@@ -45,7 +49,7 @@ namespace TestApplication {
             var authCommand = new UserCommand() {
                Command = CommandActions.Authorization,
                Login = "felias",
-               Password = "fenris"
+               PasswordHash = Encrypter.GenerateHash("fenris")
             };
 
             string authCommandXml = XmlSerializer<UserCommand>.SerializeToXmlString(authCommand);
